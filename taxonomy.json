@@ -1,0 +1,26 @@
+{
+  "$comment": "Single source of truth for the mosaic's vocabulary. Add a field or state = add one entry here. The script validates every tessera.yaml against these keys, and the site reads this file to build the legend, colours and rendering. Array order = legend order. Fields are KINDS of thing; use tags for product families (e.g. `aio`) and audience nuances, and seams (uses/partOf) for relationships.",
+
+  "fields": [
+    { "key": "client-app",   "label": "Client app",       "color": "#4fb8e8" },
+    { "key": "internal-app",  "label": "Internal app",     "color": "#818cf8" },
+    { "key": "framework",     "label": "Framework",        "color": "#ffd54a" },
+    { "key": "package",       "label": "Package",          "color": "#ff6b9d" },
+    { "key": "template",      "label": "Template",         "color": "#f5a3c7" },
+    { "key": "cli",           "label": "CLI",              "color": "#34d399" },
+    { "key": "tool",          "label": "Tool",             "color": "#f59e0b" },
+    { "key": "site",          "label": "Site",             "color": "#a3e635" },
+    { "key": "service",       "label": "Service",          "color": "#22d3ee" },
+    { "key": "experiment",    "label": "R&D / experiment", "color": "#8aa0b2" },
+    { "key": "skill",         "label": "Skill",            "color": "#c084fc" }
+  ],
+
+  "states": [
+    { "key": "fragment",   "label": "Fragment",   "brightness": 0.34, "dashed": true,  "color": "#8aa0b2" },
+    { "key": "in-dev",     "label": "In dev",     "brightness": 0.55,                  "color": "#ff9f43" },
+    { "key": "testing",    "label": "Testing",    "brightness": 0.74,                  "color": "#ffd54a" },
+    { "key": "working",    "label": "Working",    "brightness": 0.92,                  "color": "#34d399" },
+    { "key": "maintained", "label": "Maintained", "brightness": 1.0,  "glow": true,    "color": "#4fb8e8" },
+    { "key": "archived",   "label": "Archived",   "brightness": 0.26, "desat": true,   "color": "#5a6b7a" }
+  ]
+}

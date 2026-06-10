@@ -1,0 +1,18 @@
+{
+  "$comment": "Where the aggregator looks for tesserae. Use `org` to scan a whole GitHub organization, and/or `repos` to pin extra repositories (e.g. outside the org). Each repo is scanned recursively, so one repo can hold many tiles (e.g. a skills monorepo with a tessera.yaml in every folder). `fragments` reads idea issues. Auth: set GITHUB_TOKEN in your environment (a read-only PAT is enough).",
+
+  "manifestPath": "tessera.yaml",
+  "$comment_manifestPath": "Filename matched at ANY depth in a repo — not just the root.",
+
+  "org": "LaBelleApp",
+
+  "repos": [],
+
+  "fragments": {
+    "enabled": true,
+    "repo": "LaBelleApp/tessera-backlog",
+    "label": "fragment"
+  },
+
+  "output": "docs/data.json"
+}

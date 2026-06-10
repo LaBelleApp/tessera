@@ -1,0 +1,16 @@
+id: tessera
+name: Tessera
+type: site
+status: in-dev
+owner: LaBelleApp
+
+summary: Internal mosaic mapping every tool, project, skill and package the team builds.
+whenToUse: Reach for it to discover whether a tool already exists, or to onboard a new dev to what we've built.
+
+partOf: null
+
+tags: [discovery, catalog, onboarding]
+links:
+  repo: https://github.com/LaBelleApp/tessera
+  doc: null
+  demo: null

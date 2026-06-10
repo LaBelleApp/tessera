@@ -1,0 +1,19 @@
+{
+  "name": "tessera",
+  "version": "0.1.0",
+  "private": true,
+  "description": "The mosaic of everything we build — an internal map of tools, projects and skills.",
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/aggregate.mjs",
+    "demo": "node scripts/demo/make-demo.mjs",
+    "validate": "node scripts/validate.mjs examples/tessera.yaml",
+    "serve": "node scripts/serve.mjs",
+    "pack-skill": "node scripts/pack-skill.mjs"
+  },
+  "dependencies": {
+    "@octokit/rest": "^21.0.0",
+    "@octokit/plugin-throttling": "^9.0.0",
+    "js-yaml": "^4.2.0"
+  }
+}

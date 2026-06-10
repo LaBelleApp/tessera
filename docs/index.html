@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tessera — the mosaic of everything we build</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<style>
+  :root{
+    --bg:#06121a; --panel:#0b1e2bee; --border:#1c3a4a;
+    --txt:#e9f2f5; --muted:#7f9bab; --gold:#e8b04b; --gold-bright:#ffd98a; --cyan:#4fd6e0;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;overflow:hidden;background:
+    radial-gradient(1200px 800px at 70% 20%, #0d2533 0%, #06121a 55%, #040d13 100%);
+    color:var(--txt);font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+  #app{position:fixed;inset:0;display:flex;flex-direction:column}
+  header{display:flex;align-items:center;gap:18px;padding:12px 22px;
+    background:linear-gradient(180deg,#0b2330ee,#06121aee);
+    border-bottom:1px solid var(--border);box-shadow:0 1px 0 #ffffff08;z-index:30;flex-wrap:wrap}
+  .brand{display:flex;align-items:center;gap:12px}
+  .brand .mark{width:26px;height:26px}
+  .brand .name{font-family:'Cinzel',serif;font-weight:700;font-size:19px;letter-spacing:3px;
+    color:var(--gold-bright);text-shadow:0 0 14px #e8b04b55}
+  .brand .tag{color:var(--muted);font-size:12px;border-left:1px solid var(--border);padding-left:12px}
+  .spacer{flex:1}
+  .search{position:relative}
+  .search input{background:#081a25;border:1px solid var(--border);color:var(--txt);
+    border-radius:6px;padding:8px 14px 8px 32px;font-size:13px;width:220px;outline:none}
+  .search input:focus{border-color:var(--gold);box-shadow:0 0 0 2px #e8b04b22}
+  .search svg{position:absolute;left:10px;top:9px;opacity:.5}
+  .toggle{display:flex;border:1px solid var(--border);border-radius:6px;overflow:hidden;background:#081a25}
+  .toggle button{background:none;border:none;color:var(--muted);padding:8px 15px;cursor:pointer;
+    font-size:12.5px;font-weight:600;letter-spacing:.5px}
+  .toggle button.active{background:linear-gradient(180deg,#e8b04b,#c9913a);color:#1a1205}
+  main{flex:1;position:relative;overflow:hidden}
+  #stage{position:absolute;inset:0}
+  svg{width:100%;height:100%;display:block;cursor:grab}
+  svg:active{cursor:grabbing}
+  .panel-card{background:var(--panel);backdrop-filter:blur(10px);border:1px solid var(--border);
+    border-radius:10px;box-shadow:0 8px 30px #00000050, inset 0 0 0 1px #ffffff06}
+  .filters{position:absolute;top:16px;left:16px;width:206px;padding:15px 17px;z-index:20;font-size:12px}
+  .filters h4{margin:0 0 9px;font-size:10.5px;text-transform:uppercase;letter-spacing:1.5px;color:var(--gold);font-family:'Cinzel',serif}
+  .filters .grp{margin-bottom:16px}
+  .chk{display:flex;align-items:center;gap:8px;padding:3px 0;cursor:pointer;color:var(--txt)}
+  .chk input{accent-color:var(--gold)}
+  .hexmark{width:11px;height:12px;flex:none;clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%)}
+  .legend-note{color:var(--muted);font-size:11px;line-height:1.55}
+  .legend-note b{color:var(--gold-bright);font-weight:600}
+  .detail{position:absolute;top:0;right:0;height:100%;width:350px;z-index:25;
+    border-left:1px solid var(--border);background:var(--panel);backdrop-filter:blur(12px);
+    transform:translateX(100%);transition:transform .28s cubic-bezier(.2,.8,.2,1);
+    padding:22px 22px 30px;overflow-y:auto}
+  .detail.open{transform:translateX(0)}
+  .detail .close{position:absolute;top:14px;right:16px;background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer;line-height:1}
+  .detail .kicker{font-family:'Cinzel',serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase}
+  .detail h2{margin:6px 0 2px;font-size:20px;font-weight:700}
+  .detail .id{color:var(--muted);font-size:12px;font-family:ui-monospace,monospace}
+  .badges{display:flex;gap:7px;flex-wrap:wrap;margin:13px 0 6px}
+  .badge{font-size:11px;font-weight:600;padding:4px 10px;border-radius:5px;border:1px solid}
+  .field{margin:15px 0}
+  .field .lbl{font-size:10.5px;text-transform:uppercase;letter-spacing:1.3px;color:var(--gold);margin-bottom:5px;font-family:'Cinzel',serif}
+  .field .val{font-size:13.5px;line-height:1.55}
+  .tagrow{display:flex;flex-wrap:wrap;gap:6px}
+  .tag{font-size:11px;color:var(--muted);border:1px solid var(--border);border-radius:20px;padding:2px 9px}
+  .rel-list{list-style:none;padding:0;margin:6px 0 0}
+  .rel-list li{display:flex;align-items:center;gap:8px;padding:5px 0;font-size:13px;cursor:pointer}
+  .rel-list li:hover{color:var(--gold-bright)}
+  .seam{width:18px;height:1px;flex:none;background:linear-gradient(90deg,transparent,var(--gold))}
+  .seam.dash{background:none;border-top:1px dashed var(--gold)}
+  .links a{display:inline-flex;align-items:center;gap:6px;margin:8px 12px 0 0;color:var(--cyan);text-decoration:none;font-size:13px;font-weight:600}
+  .meta-row{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:14px;padding-top:12px;border-top:1px solid var(--border)}
+  #tableWrap{position:absolute;inset:0;overflow:auto;padding:24px 28px;display:none}
+  #tableWrap.show{display:block}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+  th{position:sticky;top:0;background:#0a1c28;color:var(--gold);font-size:10.5px;text-transform:uppercase;letter-spacing:1.3px;cursor:pointer;z-index:2;font-family:'Cinzel',serif}
+  tr:hover td{background:#0b2230}
+  td .name{font-weight:600;cursor:pointer}
+  td .name:hover{color:var(--gold-bright)}
+  .pill{font-size:11px;padding:2px 9px;border-radius:5px;border:1px solid;white-space:nowrap}
+  .num{text-align:center;color:var(--muted)}
+  .tooltip{position:absolute;pointer-events:none;background:#0a1c28;border:1px solid var(--gold);border-radius:6px;padding:6px 11px;font-size:12px;z-index:40;opacity:0;transition:opacity .12s;white-space:nowrap;box-shadow:0 0 16px #e8b04b33}
+  .freshness{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);color:var(--muted);font-size:11.5px;background:#0a1c28cc;padding:7px 16px;border-radius:20px;border:1px solid var(--border);z-index:15;display:flex;align-items:center;gap:9px}
+  .freshness .pulse{width:7px;height:7px;border-radius:50%;background:var(--cyan);box-shadow:0 0 8px var(--cyan);animation:pulse 2.4s ease-in-out infinite}
+  @keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
+  #overlay{position:absolute;inset:0;display:none;align-items:center;justify-content:center;z-index:50;text-align:center;padding:30px}
+  #overlay .box{max-width:460px}
+  #overlay h3{font-family:'Cinzel',serif;color:var(--gold-bright);letter-spacing:1px}
+  #overlay code{background:#0a1c28;border:1px solid var(--border);padding:2px 8px;border-radius:5px;color:var(--cyan)}
+  #overlay p{color:var(--muted);line-height:1.6}
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <div class="brand">
+      <svg class="mark" viewBox="0 0 40 44">
+        <defs><linearGradient id="mg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffd98a"/><stop offset="1" stop-color="#c9913a"/></linearGradient></defs>
+        <polygon points="20,2 38,12 38,32 20,42 2,32 2,12" fill="none" stroke="url(#mg)" stroke-width="2"/>
+        <polygon points="20,11 29,16 29,28 20,33 11,28 11,16" fill="#4fd6e0" opacity=".22" stroke="#4fd6e0" stroke-width="1"/>
+        <circle cx="20" cy="22" r="3" fill="#ffd98a"/>
+      </svg>
+      <span class="name">TESSERA</span>
+      <span class="tag">the mosaic of everything we build</span>
+    </div>
+    <div class="spacer"></div>
+    <div class="search"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7f9bab" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+      <input id="search" placeholder="Search the mosaic…" autocomplete="off"></div>
+    <div class="toggle"><button id="btnMosaic" class="active">◆ MOSAIC</button><button id="btnIndex">▤ INDEX</button></div>
+  </header>
+  <main>
+    <div id="stage"><svg id="svg"></svg></div>
+    <div class="filters panel-card" id="filters">
+      <div class="grp"><h4>Fields</h4><div id="typeFilters"></div></div>
+      <div class="grp"><h4>State</h4><div id="statusFilters"></div></div>
+      <div class="grp"><h4>Reading the mosaic</h4><div class="legend-note">Tile <b>size</b> = pieces that depend on it (bigger = load-bearing).<br><b>Glow</b> = maturity. Gold <b>seams</b> link tiles: solid = <i>depends on</i>, dashed = <i>part of</i>.</div></div>
+    </div>
+    <div class="detail" id="detail"></div>
+    <div id="tableWrap"><table id="table"></table></div>
+    <div class="freshness" id="freshness"><span class="pulse"></span><span id="freshTxt"></span></div>
+    <div id="overlay"><div class="box"><h3>Serve the mosaic</h3>
+      <p>This page loads <code>data.json</code> over HTTP, which a browser blocks on <code>file://</code>.<br><br>
+      From the repo root, run <code>npm run serve</code> and open <code>http://localhost:4173</code> — or publish <code>docs/</code> with GitHub Pages.</p></div></div>
+  </main>
+</div>
+<div class="tooltip" id="tooltip"></div>
+
+<script>
+// ============================================================
+//  TESSERA — data-driven. Loads ./taxonomy.json + ./data.json,
+//  both produced by the aggregation script (npm run build).
+//  Each tile declares only outgoing seams (uses / part-of);
+//  "relied on by" and "contains" are derived here.
+// ============================================================
+let FIELDS, STATES, NODES, GENERATED_AT, STATS;
+
+async function boot(){
+  if(location.protocol==='file:'){ document.getElementById('overlay').style.display='flex'; return; }
+  let tax, data;
+  try{
+    [tax, data] = await Promise.all([
+      fetch('./taxonomy.json').then(r=>r.json()),
+      fetch('./data.json').then(r=>r.json()),
+    ]);
+  }catch(e){ document.getElementById('overlay').style.display='flex'; return; }
+
+  FIELDS=Object.fromEntries(tax.fields.map(f=>[f.key,{label:f.label,color:f.color,raw:f.color}]));
+  STATES=Object.fromEntries(tax.states.map(s=>[s.key,{label:s.label,op:s.brightness,
+    color:s.color,dashed:!!s.dashed,glow:!!s.glow,desat:!!s.desat}]));
+  GENERATED_AT=new Date(data.generatedAt).getTime();
+  STATS=data.stats;
+  NODES=data.tesserae.map(t=>({
+    id:t.id,name:t.name,type:t.type,status:t.status,owner:t.owner,
+    summary:t.summary,use:t.whenToUse,uses:t.uses||[],partOf:t.partOf||null,
+    tags:t.tags||[],links:t.links||{},updatedAt:t.updatedAt,
+  }));
+  init();
+}
+
+function init(){
+  // keep only seams whose endpoints exist (defensive)
+  const byId=Object.fromEntries(NODES.map(n=>[n.id,n]));
+  const LINKS=[];
+  NODES.forEach(n=>{
+    (n.uses||[]).forEach(t=>{ if(byId[t]) LINKS.push({source:n.id,target:t,kind:'uses'}); });
+    if(n.partOf && byId[n.partOf]) LINKS.push({source:n.id,target:n.partOf,kind:'part-of'});
+  });
+  const inDeg={}; NODES.forEach(n=>inDeg[n.id]=0);
+  LINKS.forEach(l=>inDeg[l.target]++); NODES.forEach(n=>n.inDeg=inDeg[n.id]);
+  const reliedBy=id=>LINKS.filter(l=>l.target===id&&l.kind==='uses').map(l=>l.source);
+  const contains=id=>LINKS.filter(l=>l.target===id&&l.kind==='part-of').map(l=>l.source);
+  const dependsOn=id=>LINKS.filter(l=>l.source===id&&l.kind==='uses').map(l=>l.target);
+  const partOfOf=id=>LINKS.filter(l=>l.source===id&&l.kind==='part-of').map(l=>l.target);
+  const adj={}; NODES.forEach(n=>adj[n.id]=new Set());
+  LINKS.forEach(l=>{adj[l.source].add(l.target);adj[l.target].add(l.source);});
+
+  const state={selected:null,visibleTypes:new Set(Object.keys(FIELDS)),visibleStatus:new Set(Object.keys(STATES)),query:''};
+  const nodeVisible=n=>state.visibleTypes.has(n.type)&&state.visibleStatus.has(n.status)
+    && (!state.query || (n.name+' '+n.id+' '+n.summary+' '+n.owner).toLowerCase().includes(state.query));
+
+  // filters
+  const typeBox=document.getElementById('typeFilters');
+  Object.entries(FIELDS).forEach(([k,v])=>{const l=document.createElement('label');l.className='chk';
+    l.innerHTML=`<input type="checkbox" checked data-type="${k}"><span class="hexmark" style="background:${v.color}"></span>${v.label}`;typeBox.appendChild(l);});
+  const statusBox=document.getElementById('statusFilters');
+  Object.entries(STATES).forEach(([k,v])=>{const l=document.createElement('label');l.className='chk';
+    l.innerHTML=`<input type="checkbox" checked data-status="${k}"><span class="hexmark" style="background:${v.color}"></span>${v.label}`;statusBox.appendChild(l);});
+  typeBox.addEventListener('change',e=>{const t=e.target.dataset.type;e.target.checked?state.visibleTypes.add(t):state.visibleTypes.delete(t);refresh();});
+  statusBox.addEventListener('change',e=>{const s=e.target.dataset.status;e.target.checked?state.visibleStatus.add(s):state.visibleStatus.delete(s);refresh();});
+  document.getElementById('search').addEventListener('input',e=>{state.query=e.target.value.toLowerCase().trim();refresh();});
+
+  // svg setup
+  const svg=d3.select('#svg'),stage=document.getElementById('stage');
+  let W=stage.clientWidth,H=stage.clientHeight;
+  const defs=svg.append('defs');
+  defs.html(`
+    <filter id="glowGold" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="3.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="glowTile" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="6"/></filter>
+    <linearGradient id="seamGrad" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#c9913a"/><stop offset="0.5" stop-color="#ffd98a"/><stop offset="1" stop-color="#c9913a"/></linearGradient>`);
+  const g=svg.append('g'),gBg=g.append('g'),gLink=g.append('g'),gNode=g.append('g');
+  const hexPath=r=>{let p='';for(let i=0;i<6;i++){const a=Math.PI/180*(60*i-90);p+=(i?'L':'M')+(r*Math.cos(a)).toFixed(2)+','+(r*Math.sin(a)).toFixed(2);}return p+'Z';};
+  for(let i=0;i<46;i++){const x=Math.random()*W*1.6-W*0.3,y=Math.random()*H*1.6-H*0.3,r=6+Math.random()*22;
+    gBg.append('path').attr('d',hexPath(r)).attr('transform',`translate(${x},${y})`).attr('fill','none').attr('stroke','#e8b04b').attr('stroke-width',0.6).attr('opacity',0.025+Math.random()*0.05);}
+  const zoom=d3.zoom().scaleExtent([0.4,3]).on('zoom',e=>g.attr('transform',e.transform));
+  svg.call(zoom).on('dblclick.zoom',null);
+
+  const typeKeys=Object.keys(FIELDS),cols=Math.ceil(Math.sqrt(typeKeys.length)),anchor={};
+  typeKeys.forEach((t,i)=>{anchor[t]={x:(i%cols+0.5)/cols,y:(Math.floor(i/cols)+0.5)/Math.ceil(typeKeys.length/cols)};});
+  const ax=n=>anchor[n.type].x*W,ay=n=>anchor[n.type].y*H,radius=n=>10+Math.sqrt(n.inDeg)*6;
+
+  const sim=d3.forceSimulation(NODES)
+    .force('link',d3.forceLink(LINKS).id(d=>d.id).distance(78).strength(.25))
+    .force('charge',d3.forceManyBody().strength(-200))
+    .force('x',d3.forceX(ax).strength(.18)).force('y',d3.forceY(ay).strength(.18))
+    .force('collide',d3.forceCollide(d=>radius(d)+8)).on('tick',ticked);
+
+  let linkSel=gLink.selectAll('line'),nodeSel=gNode.selectAll('g.tile');
+  linkSel=gLink.selectAll('line').data(LINKS,d=>d.source.id+'-'+d.target.id).enter().append('line')
+    .attr('stroke','url(#seamGrad)').attr('stroke-linecap','round')
+    .attr('stroke-dasharray',d=>d.kind==='part-of'?'2 5':null);
+  const ent=gNode.selectAll('g.tile').data(NODES,d=>d.id).enter().append('g').attr('class','tile').style('cursor','pointer')
+    .call(d3.drag().on('start',(e,d)=>{if(!e.active)sim.alphaTarget(.3).restart();d.fx=d.x;d.fy=d.y;})
+      .on('drag',(e,d)=>{d.fx=e.x;d.fy=e.y;}).on('end',(e,d)=>{if(!e.active)sim.alphaTarget(0);d.fx=null;d.fy=null;}))
+    .on('click',(e,d)=>{e.stopPropagation();select(d.id);})
+    .on('mouseenter',(e,d)=>showTip(e,d)).on('mousemove',moveTip).on('mouseleave',hideTip);
+  ent.append('path').attr('class','halo').attr('filter','url(#glowTile)');
+  ent.append('path').attr('class','facet');
+  ent.append('path').attr('class','sheen');
+  ent.append('path').attr('class','bezel').attr('fill','none');
+  ent.append('text').attr('class','lbl').attr('text-anchor','middle').attr('fill','#d7e6ec').attr('font-size','10.5px').attr('font-weight','500').attr('paint-order','stroke').attr('stroke','#06121a').attr('stroke-width','3px').style('pointer-events','none');
+  nodeSel=ent;
+
+  function refresh(){
+    const sel=state.selected,neigh=sel?adj[sel]:null;
+    nodeSel.each(function(d){
+      const vis=nodeVisible(d),t=FIELDS[d.type],s=STATES[d.status],r=radius(d);
+      const isSel=sel===d.id,isNeigh=sel&&neigh.has(d.id);
+      let op=vis?s.op:0.06; if(sel&&!isSel&&!isNeigh)op=vis?Math.min(op,0.15):0.04;
+      const el=d3.select(this),col=s.desat?'#48586a':t.raw;
+      el.style('display',(vis||sel)?null:'none').style('opacity',op);
+      el.select('.facet').attr('d',hexPath(r)).attr('fill',col).attr('fill-opacity',0.9);
+      el.select('.sheen').attr('d',hexPath(r*0.62)).attr('transform',`translate(0,${-r*0.22})`).attr('fill','#fff').attr('fill-opacity',0.16);
+      el.select('.halo').attr('d',hexPath(r+((s.glow||isSel)?7:3))).attr('fill',col).attr('opacity',(s.glow||isSel)?0.5:0.18);
+      el.select('.bezel').attr('d',hexPath(r)).attr('stroke',isSel?'#ffd98a':'#e8b04b').attr('stroke-width',isSel?2.4:1.4)
+        .attr('stroke-dasharray',s.dashed?'3 3':null).attr('filter',isSel?'url(#glowGold)':null);
+      el.select('.lbl').attr('y',r+14).text(d.name).style('display',(r>12||isSel||isNeigh)?null:'none');
+    });
+    linkSel.each(function(l){const visL=nodeVisible(l.source)&&nodeVisible(l.target);let op,w;
+      if(sel){const on=l.source.id===sel||l.target.id===sel;op=on?0.95:0.05;w=on?2:1;}else{op=visL?0.22:0.03;w=1;}
+      d3.select(this).attr('opacity',op).attr('stroke-width',w).attr('filter',(sel&&(l.source.id===sel||l.target.id===sel))?'url(#glowGold)':null);});
+  }
+  function ticked(){linkSel.attr('x1',d=>d.source.x).attr('y1',d=>d.source.y).attr('x2',d=>d.target.x).attr('y2',d=>d.target.y);
+    nodeSel.attr('transform',d=>`translate(${d.x},${d.y})`);}
+  svg.on('click',()=>select(null));
+
+  // detail panel
+  const detail=document.getElementById('detail');
+  const badge=(c,t)=>`<span class="badge" style="color:${c};border-color:${c}66;background:${c}14">${t}</span>`;
+  const relItem=(id,dash)=>{const n=byId[id];return `<li data-go="${id}"><span class="seam${dash?' dash':''}"></span>${n.name} <span style="color:var(--muted);font-size:11px">· ${STATES[n.status].label}</span></li>`;};
+  const ago=iso=>{const d=Math.round((GENERATED_AT-new Date(iso).getTime())/864e5);
+    return d<=0?'today':d===1?'yesterday':d<30?d+' days ago':d<60?'a month ago':Math.round(d/30)+' months ago';};
+  function renderDetail(id){
+    const n=byId[id],t=FIELDS[n.type],s=STATES[n.status];
+    const dep=dependsOn(id),po=partOfOf(id),rb=reliedBy(id),ct=contains(id);
+    let h=`<button class="close">×</button><div class="kicker" style="color:${t.raw}">${t.label}</div>
+      <h2>${n.name}</h2><div class="id">${n.id}</div>
+      <div class="badges">${badge(s.color,'◆ '+s.label)}${n.inDeg?badge('#ffd98a',n.inDeg+' rely on this'):''}</div>
+      <div class="field"><div class="lbl">What it is</div><div class="val">${n.summary}</div></div>
+      <div class="field"><div class="lbl">When to use it</div><div class="val">${n.use||'—'}</div></div>
+      <div class="field"><div class="lbl">Owner</div><div class="val">${n.owner}</div></div>`;
+    if(dep.length)h+=`<div class="field"><div class="lbl">Depends on</div><ul class="rel-list">${dep.map(x=>relItem(x,false)).join('')}</ul></div>`;
+    if(po.length) h+=`<div class="field"><div class="lbl">Part of</div><ul class="rel-list">${po.map(x=>relItem(x,true)).join('')}</ul></div>`;
+    if(rb.length) h+=`<div class="field"><div class="lbl">Relied on by · computed</div><ul class="rel-list">${rb.map(x=>relItem(x,false)).join('')}</ul></div>`;
+    if(ct.length) h+=`<div class="field"><div class="lbl">Contains · computed</div><ul class="rel-list">${ct.map(x=>relItem(x,true)).join('')}</ul></div>`;
+    if(n.tags&&n.tags.length)h+=`<div class="field"><div class="lbl">Tags</div><div class="tagrow">${n.tags.map(x=>`<span class="tag">${x}</span>`).join('')}</div></div>`;
+    const L=n.links||{},lk=[];
+    if(L.repo)lk.push(`<a href="${L.repo}" target="_blank" rel="noopener">↗ Repo</a>`);
+    if(L.doc)lk.push(`<a href="${L.doc}" target="_blank" rel="noopener">↗ Docs</a>`);
+    if(L.demo)lk.push(`<a href="${L.demo}" target="_blank" rel="noopener">↗ Demo</a>`);
+    if(lk.length)h+=`<div class="field links">${lk.join('')}</div>`;
+    h+=`<div class="meta-row"><span>Last updated</span><span>${n.updatedAt?ago(n.updatedAt):'—'}</span></div>`;
+    detail.innerHTML=h;detail.classList.add('open');
+    detail.querySelector('.close').onclick=()=>select(null);
+    detail.querySelectorAll('[data-go]').forEach(li=>li.onclick=()=>select(li.dataset.go));
+  }
+  function select(id){state.selected=id;if(id)renderDetail(id);else detail.classList.remove('open');refresh();renderTable();}
+
+  const tip=document.getElementById('tooltip');
+  function showTip(e,d){tip.textContent=d.name+' — '+STATES[d.status].label;tip.style.opacity=1;moveTip(e);}
+  function moveTip(e){tip.style.left=(e.clientX+12)+'px';tip.style.top=(e.clientY+12)+'px';}
+  function hideTip(){tip.style.opacity=0;}
+
+  // index table
+  let sortKey='inDeg',sortDir=-1;
+  function renderTable(){
+    const rows=NODES.filter(nodeVisible).slice().sort((a,b)=>{let va=a[sortKey],vb=b[sortKey];
+      if(['name','type','status','owner'].includes(sortKey))return sortDir*(''+va).localeCompare(''+vb);
+      if(sortKey==='updated')return sortDir*(new Date(a.updatedAt)-new Date(b.updatedAt));
+      return sortDir*((va||0)-(vb||0));});
+    const th=(k,l)=>`<th data-k="${k}">${l}${sortKey===k?(sortDir<0?' ▾':' ▴'):''}</th>`;
+    let h=`<thead><tr>${th('name','Tessera')}${th('type','Field')}${th('status','State')}${th('owner','Owner')}<th>What it is</th><th>When to use</th>${th('inDeg','◂ rely')}${th('updated','Updated')}</tr></thead><tbody>`;
+    rows.forEach(n=>{const t=FIELDS[n.type],s=STATES[n.status];
+      h+=`<tr><td><span class="name" data-go="${n.id}">${n.name}</span></td>
+        <td><span class="pill" style="color:${t.raw};border-color:${t.raw}66">${t.label}</span></td>
+        <td><span class="pill" style="color:${s.color};border-color:${s.color}66">${s.label}</span></td>
+        <td style="color:var(--muted)">${n.owner}</td><td>${n.summary}</td><td style="color:var(--muted)">${n.use||'—'}</td>
+        <td class="num">${n.inDeg||''}</td><td class="num">${n.updatedAt?ago(n.updatedAt):'—'}</td></tr>`;});
+    h+='</tbody>';document.getElementById('table').innerHTML=h;
+    document.querySelectorAll('#table th[data-k]').forEach(th=>th.onclick=()=>{const k=th.dataset.k;
+      if(sortKey===k)sortDir*=-1;else{sortKey=k;sortDir=(k==='inDeg'||k==='updated')?-1:1;}renderTable();});
+    document.querySelectorAll('#table [data-go]').forEach(el=>el.onclick=()=>{setView('mosaic');select(el.dataset.go);});
+  }
+  const btnM=document.getElementById('btnMosaic'),btnI=document.getElementById('btnIndex');
+  function setView(v){const idx=v==='index';
+    document.getElementById('tableWrap').classList.toggle('show',idx);
+    document.getElementById('stage').style.display=idx?'none':'block';
+    document.getElementById('filters').style.display=idx?'none':'block';
+    document.getElementById('freshness').style.display=idx?'none':'flex';
+    btnI.classList.toggle('active',idx);btnM.classList.toggle('active',!idx);if(idx)renderTable();}
+  btnM.onclick=()=>setView('mosaic');btnI.onclick=()=>setView('index');
+
+  const frags=STATS.fragments??NODES.filter(n=>n.status==='fragment').length;
+  document.getElementById('freshTxt').innerHTML=`Mosaic assembled <b style="color:var(--cyan)">${ago(new Date(GENERATED_AT).toISOString())}</b> · ${NODES.length} tesserae · ${frags} fragments`;
+
+  window.addEventListener('resize',()=>{W=stage.clientWidth;H=stage.clientHeight;
+    sim.force('x',d3.forceX(ax).strength(.18)).force('y',d3.forceY(ay).strength(.18));sim.alpha(.3).restart();});
+  refresh();renderTable();
+}
+boot();
+</script>
+</body>
+</html>

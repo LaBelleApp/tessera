@@ -1,0 +1,28 @@
+# tessera.yaml — drop this file at the root of any repo to place it on the mosaic.
+# Tip: run the `manifest-gen` skill to generate this automatically from a repo.
+#
+# A tile declares ONLY its outgoing seams (uses / part-of).
+# "relied on by" and "contains" are computed for you — never declare them by hand.
+
+id: banking-app                 # required · unique, stable, kebab-case (matches the repo)
+name: Banking App               # required · human-readable display name
+type: client-project            # required · must exist in taxonomy.json > fields
+status: maintained              # required · must exist in taxonomy.json > states
+owner: Squad Alpha              # required · who to talk to (person or team)
+
+summary: Mobile account-management app for a fintech client.   # required · one line: what it is
+whenToUse: Reference when starting a new fintech project.        # required · one line: when to reach for it
+
+# --- seams (all optional) ---
+uses:                           # hard dependencies — "won't run without these"
+  - flutter-core
+  - auth-module
+  - deploy-cli
+partOf: null                    # composition — e.g. a package that is part of a framework
+
+# --- extras (all optional) ---
+tags: [fintech, mobile]         # implicit links, no edge drawn (filterable)
+links:
+  repo: https://github.com/my-org/banking-app
+  doc: https://docs.my-org.dev/banking-app
+  demo: null

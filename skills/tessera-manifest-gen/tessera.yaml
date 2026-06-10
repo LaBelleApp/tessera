@@ -1,0 +1,16 @@
+id: tessera-manifest-gen
+name: Tessera Manifest Gen
+type: skill
+status: in-dev
+owner: LaBelleApp
+
+summary: Skill that generates a valid tessera.yaml for a repo so it becomes a tile on the mosaic.
+whenToUse: Reach for it when onboarding a repo or subfolder to Tessera, or generating/updating a tessera manifest.
+
+partOf: tessera
+
+tags: [tessera, onboarding, manifest]
+links:
+  repo: https://github.com/LaBelleApp/tessera/tree/main/skills/tessera-manifest-gen
+  doc: null
+  demo: null
