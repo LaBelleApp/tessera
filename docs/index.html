@@ -78,6 +78,8 @@
   .rel-list{list-style:none;padding:0;margin:6px 0 0}
   .rel-list li{display:flex;align-items:center;gap:8px;padding:5px 0;font-size:13px;cursor:pointer}
   .rel-list li:hover{color:var(--gold-bright)}
+  .rel-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .rel-list .st{flex:none;color:var(--muted);font-size:11px}
   .seam{width:18px;height:1px;flex:none;background:linear-gradient(90deg,transparent,var(--gold))}
   .seam.dash{background:none;border-top:1px dashed var(--gold)}
   .links a{display:inline-flex;align-items:center;gap:6px;margin:8px 12px 0 0;color:var(--cyan);text-decoration:none;font-size:13px;font-weight:600}
@@ -102,11 +104,14 @@
   tbody tr:hover td{background:#11303f}
   td .name{font-weight:600;color:var(--txt)}
   td .name:hover{color:var(--gold-bright)}
-  td.summary{color:#c6d4dc;max-width:320px}
-  td.use{color:var(--muted);max-width:240px}
+  td.summary{color:#c6d4dc}
+  td.use{color:var(--muted)}
+  td.summary span,td.use span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  td.summary span{max-width:360px}
+  td.use span{max-width:240px}
   .pill{font-size:11px;padding:3px 10px;border-radius:20px;border:1px solid;white-space:nowrap;font-weight:600}
   .num{text-align:center;color:var(--muted);font-variant-numeric:tabular-nums}
-  .tooltip{position:absolute;pointer-events:none;background:#0a1c28;border:1px solid var(--gold);border-radius:6px;padding:6px 11px;font-size:12px;z-index:40;opacity:0;transition:opacity .12s;white-space:nowrap;box-shadow:0 0 16px #e8b04b33}
+  .tooltip{position:absolute;pointer-events:none;background:#0a1c28;border:1px solid var(--gold);border-radius:6px;padding:6px 11px;font-size:12px;z-index:40;opacity:0;transition:opacity .12s;white-space:nowrap;box-shadow:0 0 16px #e8b04b33;max-width:340px;overflow:hidden;text-overflow:ellipsis}
   .freshness{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);color:var(--muted);font-size:11.5px;background:#0a1c28cc;padding:7px 16px;border-radius:20px;border:1px solid var(--border);z-index:15;display:flex;align-items:center;gap:9px}
   .freshness .pulse{width:7px;height:7px;border-radius:50%;background:var(--cyan);box-shadow:0 0 8px var(--cyan);animation:pulse 2.4s ease-in-out infinite}
   @keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
@@ -288,7 +293,7 @@ function init(){
       el.select('.halo').attr('d',hexPath(r+((s.glow||isSel)?7:3))).attr('fill',col).attr('opacity',(s.glow||isSel)?0.5:0.18);
       el.select('.bezel').attr('d',hexPath(r)).attr('stroke',isSel?'#ffd98a':'#e8b04b').attr('stroke-width',isSel?2.4:1.4)
         .attr('stroke-dasharray',s.dashed?'3 3':null).attr('filter',isSel?'url(#glowGold)':null);
-      el.select('.lbl').attr('y',r+14).text(d.name).style('display',(r>12||isSel||isNeigh)?null:'none');
+      el.select('.lbl').attr('y',r+14).text(d.name.length>20?d.name.slice(0,19)+'…':d.name).style('display',(r>12||isSel||isNeigh)?null:'none');
     });
     linkSel.each(function(l){const visL=nodeVisible(l.source)&&nodeVisible(l.target);let op,w;
       if(sel){const on=l.source.id===sel||l.target.id===sel;op=on?0.95:0.05;w=on?2:1;}else{op=visL?0.22:0.03;w=1;}
@@ -301,7 +306,7 @@ function init(){
   // detail panel
   const detail=document.getElementById('detail');
   const badge=(c,t)=>`<span class="badge" style="color:${c};border-color:${c}66;background:${c}14">${t}</span>`;
-  const relItem=(id,dash)=>{const n=byId[id];return `<li data-go="${id}"><span class="seam${dash?' dash':''}"></span>${n.name} <span style="color:var(--muted);font-size:11px">· ${STATES[n.status].label}</span></li>`;};
+  const relItem=(id,dash)=>{const n=byId[id];return `<li data-go="${id}"><span class="seam${dash?' dash':''}"></span><span class="rel-name">${n.name}</span><span class="st">· ${STATES[n.status].label}</span></li>`;};
   const ago=iso=>{const d=Math.round((GENERATED_AT-new Date(iso).getTime())/864e5);
     return d<=0?'today':d===1?'yesterday':d<30?d+' days ago':d<60?'a month ago':Math.round(d/30)+' months ago';};
   function renderDetail(id){
@@ -348,7 +353,7 @@ function init(){
       h+=`<tr data-go="${n.id}"><td><span class="name">${n.name}</span></td>
         <td><span class="pill" style="color:${t.raw};border-color:${t.raw}66">${t.label}</span></td>
         <td><span class="pill" style="color:${s.color};border-color:${s.color}66">${s.label}</span></td>
-        <td style="color:var(--muted)">${n.owner}</td><td class="summary">${n.summary}</td><td class="use">${n.use||'—'}</td>
+        <td style="color:var(--muted)">${n.owner}</td><td class="summary"><span>${n.summary}</span></td><td class="use"><span>${n.use||'—'}</span></td>
         <td class="num">${n.inDeg||''}</td><td class="num">${n.updatedAt?ago(n.updatedAt):'—'}</td></tr>`;});
     h+='</tbody>';document.getElementById('table').innerHTML=h;
     const ic=document.getElementById('indexCount');if(ic)ic.textContent=rows.length===NODES.length?`${NODES.length} tesserae`:`${rows.length} of ${NODES.length} shown`;
