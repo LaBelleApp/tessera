@@ -30,7 +30,16 @@ function normalize(m, extra) {
 
 async function collectManifests(octo) {
   const targets = [];
-  if (config.org) (await listOrgRepos(octo, config.org)).forEach(r => targets.push([r.owner.login, r.name]));
+  if (config.org) {
+    const repos = await listOrgRepos(octo, config.org);
+    const priv = repos.filter(r => r.private).length;
+    console.log(`Org ${config.org}: ${repos.length} repos visible — ${priv} private, ${repos.length - priv} public`);
+    if (repos.length && priv === 0) {
+      console.warn('! 0 private repos visible. If you expected some, the token lacks private access:');
+      console.warn('  fine-grained PAT → org must APPROVE it, Repository access = All repositories, perms Contents+Metadata+Issues (read). See README → "GitHub token".');
+    }
+    repos.forEach(r => targets.push([r.owner.login, r.name]));
+  }
   for (const full of config.repos || []) {
     const [owner, name] = full.split('/');
     if (owner && name) targets.push([owner, name]);
@@ -109,6 +118,8 @@ async function collectFragments(octo) {
 
 async function main() {
   const octo = makeClient();
+  try { const me = await octo.rest.users.getAuthenticated(); console.log(`Authenticated as ${me.data.login}`); }
+  catch { console.warn('! Could not identify the token user (continuing).'); }
   console.log(`Scanning ${config.org ? 'org ' + config.org : ''} ${(config.repos || []).length} pinned repo(s)…`);
   const { tesserae, scanned } = await collectManifests(octo);
   const fragments = await collectFragments(octo);

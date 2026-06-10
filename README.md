@@ -53,6 +53,46 @@ npm run serve                      # → http://localhost:4173
 > The site fetches `data.json` over HTTP, so open it via `npm run serve` or Pages —
 > not by double-clicking the file (browsers block `fetch` on `file://`).
 
+### GitHub token
+
+`npm run build` reads `GITHUB_TOKEN`. It only ever **reads** — no write permission is needed
+anywhere.
+
+**Create a fine-grained PAT** (*GitHub → Settings → Developer settings → Personal access tokens
+→ Fine-grained tokens → Generate new token*):
+
+1. **Token name** + an **expiration** (e.g. 90 days).
+2. **Resource owner** = your **organization** (e.g. `LaBelleApp`). ← this is what makes it an
+   org token; it may then need org approval (step 6).
+3. **Repository access** = **All repositories** (or *Only select* including the **private** ones).
+   *Public repositories* only = you'll never see private repos.
+4. **Permissions → Repository permissions**, all **Read-only** — the minimum is just three:
+
+   | Permission | Level | Why it's needed |
+   |---|---|---|
+   | **Metadata** | Read-only | list the org's repos (mandatory, auto-selected) |
+   | **Contents** | Read-only | read each `tessera.yaml`, the git tree, and commit dates |
+   | **Issues** | Read-only | read `fragment` issues (skip if you don't use fragments) |
+
+   Leave everything else *No access*. No *Organization permissions* are required.
+5. **Generate token**, copy it, and `export GITHUB_TOKEN=github_pat_…`.
+6. If the org requires approval, the token shows **pending** until an org owner approves it:
+   *Org → Settings → Personal access tokens → Pending requests*. Until then it behaves as
+   public-only. (The org must also *allow* fine-grained tokens at all.)
+
+**Classic PAT** (alternative): scope **`repo`** (full — `public_repo` alone won't see private)
+plus **`read:org`**. If the org enforces SAML SSO, click **Configure SSO → Authorize** on the token.
+
+Quick check of what the token actually sees:
+
+```bash
+curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
+  "https://api.github.com/orgs/<org>/repos?type=private&per_page=100" | grep -c '"full_name"'
+```
+
+`0` while you have private repos ⇒ a permission, repository-access, or approval issue above. The
+build also prints `Authenticated as …` and a public/private repo count on each run to surface this.
+
 ---
 
 ## Adding things
