@@ -22,17 +22,31 @@ are computed by the aggregator — never write them.
 1. **Locate the target.** Ask which repo — or which **subfolder** of a monorepo — to onboard
    if it isn't obvious (a local path, or the current directory). Call it `<TARGET>`.
 
-2. **Run detection** from the Tessera repo root so the taxonomy and demo ids resolve:
+2. **Run detection** on the target. `detect.mjs` is self-contained (Node builtins only), so it
+   runs from anywhere — point it at the current folder:
    ```bash
-   node skills/tessera-manifest-gen/detect.mjs <TARGET> docs/data.json
+   node <path-to>/detect.mjs <TARGET> [mosaic-data-source]
    ```
-   This prints JSON: `idGuess`, `nameGuess`, `repoUrl` (already deep-linked to the subfolder),
-   `subpath`, `ecosystem`, `typeGuess`, `statusGuess`, `ownerHint`, `usesSuggested`,
-   `dependencies`, `readmeExcerpt`, and `existingManifest` (if a manifest is already there).
+   The 2nd argument is **optional** and only powers `usesSuggested` (mapping dependencies to
+   existing tile ids). Prefer the **`TESSERA_DATA` env var** — set once in the shell to a local
+   path *or* an https URL of the mosaic's `data.json` — then omit the argument. You may also
+   pass that path/URL explicitly as the 2nd argument. Never hard-code a URL here.
 
-3. **Read the taxonomy** (`taxonomy.json`) to know the allowed `fields` (→ `type`) and
-   `states` (→ `status`). Never invent a value outside these sets. If the repo truly needs
-   a new field, that is a deliberate taxonomy change (a PR on `taxonomy.json`), not a one-off.
+   Omit it entirely and the manifest is still generated correctly — you just fill `uses` from
+   the description instead of getting auto-suggestions.
+
+   It prints JSON: `idGuess`, `nameGuess`, `repoUrl` (deep-linked to the subfolder), `subpath`,
+   `ecosystem`, `typeGuess`, `statusGuess`, `ownerHint`, `usesSuggested`, `dependencies`,
+   `taxonomy` (the allowed `fields`/`states`), `typeAllowed`, `readmeExcerpt`, and
+   `existingManifest` (if a manifest is already there).
+
+3. **Use the allowed vocabulary.** Pick `type` from `taxonomy.fields` and `status` from
+   `taxonomy.states` in the detector output — never invent a value outside those sets.
+   If `taxonomy` is `null` (no `TESSERA_DATA`/`TESSERA_TAXONOMY` set and not run inside the
+   Tessera repo), read the Tessera repo's `taxonomy.json` directly, or ask the user for the
+   source. A genuinely new field is a deliberate taxonomy change (a PR on `taxonomy.json`),
+   not a one-off. The central `npm run build` re-validates every manifest, so it's the final
+   guardrail if a wrong value slips through.
 
 4. **Draft the manifest.** Fill each field:
    - `id` ← `idGuess` (kebab-case, stable, matches the repo).

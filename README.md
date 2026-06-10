@@ -84,7 +84,60 @@ skills/
 
 The recursive scan picks up every manifest. Each tile keeps its **own** freshness (last commit
 touching *its* folder) and a deep link straight to that folder — not the repo root. To generate
-one, point the skill at the subfolder: `node skills/tessera-manifest-gen/detect.mjs skills/doc-gen docs/data.json`.
+one, point the skill at the subfolder (see below).
+
+---
+
+## Generating manifests with the `tessera-manifest-gen` skill
+
+The skill writes a valid `tessera.yaml` for you: it inspects a repo (or a subfolder), drafts
+every field, maps dependencies to existing tiles, and asks only for what it can't detect
+(status, owner). It lives in [`skills/tessera-manifest-gen/`](skills/tessera-manifest-gen/);
+`detect.mjs` is dependency-free, so it runs from any folder.
+
+**Install (Cowork).** Open `skills/tessera-manifest-gen.skill` and click *Save skill*. After
+editing the skill, rebuild the bundle with `npm run pack-skill` and reinstall.
+
+**One-time setup (recommended).** Point the skill at the mosaic. Add to your shell profile
+(`~/.zshrc`) — a local path **or** an https URL, never hard-coded in the skill:
+
+```bash
+export TESSERA_DATA="$HOME/Documents/Wayup/tessera/docs/data.json"   # local file
+# once the site is published, you can instead use its data.json URL:
+# export TESSERA_DATA="https://<org>.github.io/tessera/data.json"
+```
+
+This one variable covers both needs: the **known ids** (to suggest `uses`) and, from the
+`taxonomy.json` sitting next to it, the **allowed fields/states** — so the skill knows the
+vocabulary even when run in another repo. Override the taxonomy source separately with
+`TESSERA_TAXONOMY` if ever needed.
+
+Without it the manifest is still generated, but the skill won't see the vocabulary or suggest
+seams — so set it, or run the skill inside the Tessera repo (where `taxonomy.json` lives).
+Either way the central `npm run build` re-validates every manifest as the final guardrail.
+(Early on, `uses` suggestions are sparse: ids only exist once their manifests do, and grow each
+time you re-run the build.)
+
+**Use it.** From the repo — or the subfolder of a monorepo — you want to onboard, ask Claude:
+
+> "add this repo to Tessera"
+
+It runs the detector, confirms the few uncertain fields with you, writes `tessera.yaml`, and
+validates it. To run the detector yourself:
+
+```bash
+node <path-to>/detect.mjs .                  # current folder; uses $TESSERA_DATA if set
+node <path-to>/detect.mjs ./skills/doc-gen   # a subfolder (monorepo) — id + deep link derived from it
+node <path-to>/detect.mjs . "$TESSERA_DATA"  # or pass the data source (path or URL) explicitly
+```
+
+Then validate from the Tessera repo root and commit the manifest in the target repo:
+
+```bash
+node scripts/validate.mjs <TARGET>/tessera.yaml   # → ✓ … is valid
+```
+
+The new tile appears on the mosaic at the next `npm run build` + push.
 
 ---
 
