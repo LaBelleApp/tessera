@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-06-10T23:09:55.828Z",
+  "generatedAt": "2026-06-10T23:27:14.277Z",
   "stats": {
     "mode": "org",
     "reposScanned": 23,
-    "tesserae": 2,
-    "fragments": 0
+    "tesserae": 4,
+    "fragments": 1
   },
   "tesserae": [
     {
@@ -51,7 +51,72 @@
         "demo": null
       },
       "isFragment": false,
-      "updatedAt": "2026-06-10T23:02:06Z"
+      "updatedAt": "2026-06-10T23:10:16Z"
+    },
+    {
+      "id": "belt",
+      "name": "Belt",
+      "type": "tool",
+      "status": "working",
+      "owner": "LaBelleApp",
+      "summary": "Local, Obsidian-friendly task board that Claude drains automatically, running post-task actions after each card.",
+      "whenToUse": "Reach for it to queue tasks for Claude to work through autonomously, one isolated board per project.",
+      "uses": [],
+      "partOf": null,
+      "tags": [
+        "obsidian",
+        "task-board",
+        "automation",
+        "claude"
+      ],
+      "links": {
+        "repo": "https://github.com/LaBelleApp/belt",
+        "doc": null,
+        "demo": null
+      },
+      "isFragment": false,
+      "updatedAt": "2026-06-10T23:18:50Z"
+    },
+    {
+      "id": "app-spec-builder",
+      "name": "App Spec Builder",
+      "type": "skill",
+      "status": "working",
+      "owner": "LaBelleApp",
+      "summary": "Method to fully specify an app — actors, data model, epics→user stories, server ops — then choose a backend stack on explicit criteria.",
+      "whenToUse": "Reach for it when scoping or modelling an app idea, writing a spec, or comparing backends (Firebase/Supabase/custom).",
+      "uses": [],
+      "partOf": null,
+      "tags": [
+        "spec",
+        "planning",
+        "backend",
+        "product"
+      ],
+      "links": {
+        "repo": "https://github.com/LaBelleApp/skills/tree/main/app-spec-builder",
+        "doc": null,
+        "demo": null
+      },
+      "isFragment": false,
+      "updatedAt": "2026-06-10T23:23:25Z"
+    },
+    {
+      "id": "fragment-1",
+      "name": "Utiliser Obsidian comme base de connaissance commune à tous les projets pour que Claude puisse s'en servir",
+      "type": "tool",
+      "status": "fragment",
+      "owner": "ClementVandvl",
+      "summary": "Claude Memory",
+      "whenToUse": "",
+      "uses": [],
+      "partOf": null,
+      "tags": [],
+      "links": {
+        "repo": "https://github.com/LaBelleApp/tessera-backlog/issues/1"
+      },
+      "updatedAt": "2026-06-10T23:26:37Z",
+      "isFragment": true
     }
   ]
 }
