@@ -71,14 +71,30 @@ async function collectFragments(octo) {
   const cfg = config.fragments;
   if (!cfg || !cfg.enabled) return [];
   const [owner, repo] = cfg.repo.split('/');
-  const issues = await listFragmentIssues(octo, owner, repo, cfg.label);
+  let issues;
+  try {
+    issues = await listFragmentIssues(octo, owner, repo, cfg.label);
+  } catch (e) {
+    if (e.status === 404) {
+      console.warn(`! fragments skipped: ${cfg.repo} has Issues disabled, or the token can't see it. ` +
+        `Enable Issues on that repo (Settings → Features), or set fragments.enabled=false.`);
+      return [];
+    }
+    throw e;
+  }
   return issues.map(issue => {
     const f = parseIssueForm(issue.body || '');
     const uses = (f['depends on (optional)'] || '').split(',').map(s => s.trim()).filter(Boolean);
+    // an out-of-taxonomy field would break the site, so fall back to experiment
+    let type = f['field'] || 'experiment';
+    if (!taxonomy.fields.has(type)) {
+      console.warn(`! fragment #${issue.number}: unknown field "${type}" → experiment`);
+      type = 'experiment';
+    }
     return {
       id: `fragment-${issue.number}`,
       name: f['name'] || issue.title.replace(/^\[fragment\]\s*/i, ''),
-      type: f['field'] || 'experiment',
+      type,
       status: 'fragment',
       owner: (issue.assignee && issue.assignee.login) || (issue.user && issue.user.login) || 'unassigned',
       summary: f['what it is'] || '',

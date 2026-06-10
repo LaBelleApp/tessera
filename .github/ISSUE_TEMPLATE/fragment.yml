@@ -1,0 +1,57 @@
+name: ✦ Fragment (idea)
+description: Capture a loose idea — a tool, skill or project that does not exist yet. It appears on the mosaic as a translucent, unset tile.
+title: "[fragment] "
+labels: [fragment]
+body:
+  - type: markdown
+    attributes:
+      value: A fragment is an idea with near-zero friction. No repo, no manifest needed. When it becomes real, create the repo with a `tessera.yaml` and close this issue.
+  - type: input
+    id: name
+    attributes:
+      label: Name
+      placeholder: PR Summary
+    validations:
+      required: true
+  - type: dropdown
+    id: type
+    attributes:
+      label: Field
+      description: Which galaxy would it live in? (must match taxonomy.json)
+      options:
+        - client-app
+        - internal-app
+        - framework
+        - package
+        - template
+        - cli
+        - tool
+        - site
+        - service
+        - experiment
+        - skill
+    validations:
+      required: true
+  - type: input
+    id: summary
+    attributes:
+      label: What it is
+      description: One line.
+      placeholder: Summarizes a PR for reviewers.
+    validations:
+      required: true
+  - type: input
+    id: whenToUse
+    attributes:
+      label: When would you use it
+      placeholder: To speed up code review.
+    validations:
+      required: false
+  - type: input
+    id: uses
+    attributes:
+      label: Depends on (optional)
+      description: Comma-separated tile ids it would rely on.
+      placeholder: aio, ui-kit
+    validations:
+      required: false

@@ -7,7 +7,7 @@
   "scripts": {
     "build": "node scripts/aggregate.mjs",
     "demo": "node scripts/demo/make-demo.mjs",
-    "validate": "node scripts/validate.mjs examples/tessera.yaml",
+    "validate": "node scripts/validate.mjs examples/tessera.example.yaml",
     "serve": "node scripts/serve.mjs",
     "pack-skill": "node scripts/pack-skill.mjs"
   },

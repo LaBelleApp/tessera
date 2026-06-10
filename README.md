@@ -57,12 +57,31 @@ npm run serve                      # → http://localhost:4173
 
 ## Adding things
 
-**A real tile** — add `tessera.yaml` to the repo root (see [`examples/tessera.yaml`](examples/tessera.yaml));
+**A real tile** — add `tessera.yaml` to the repo root (see [`examples/tessera.example.yaml`](examples/tessera.example.yaml));
 or run the `tessera-manifest-gen` skill to generate it. Required: `id, name, type, status, owner, summary, whenToUse`.
 
 **A fragment (idea)** — open an issue in the backlog repo with the *Fragment* template
 (label `fragment`). No repo, no manifest. It shows up as a translucent, unset tile.
 When it becomes real, create the repo + manifest and close the issue.
+
+### Setting up the fragment backlog (one-time)
+
+Fragments live as GitHub issues in a dedicated, otherwise-empty repo. To set it up:
+
+1. **Create the repo** in the org, e.g. `tessera-backlog` (it holds issues only — no code).
+2. **Enable Issues** on it: *Settings → General → Features → ✅ Issues*. (If Issues are off,
+   the API returns `404` and the build skips fragments with a warning.)
+3. **Add the issue form** at `.github/ISSUE_TEMPLATE/fragment.yml` — copy this repo's
+   [`.github/ISSUE_TEMPLATE/fragment.yml`](.github/ISSUE_TEMPLATE/fragment.yml) into it. Its
+   `Field` dropdown must list the same keys as `taxonomy.json`.
+4. **Create the `fragment` label** (any colour) so it can be applied to the issues.
+5. **Point the config** at it in `tessera.config.json`:
+   ```json
+   "fragments": { "enabled": true, "repo": "<org>/tessera-backlog", "label": "fragment" }
+   ```
+
+The token used by `npm run build` needs read access to that repo (it's covered by `repo`/
+`read:org` on a PAT). From then on, every open `fragment`-labelled issue becomes a tile.
 
 ### Many tiles in one repo (skills monorepo)
 
@@ -163,6 +182,25 @@ so the mosaic doesn't sprawl into one-tile galaxies.
 Encoding: tile **colour** = field · tile **size** = incoming dependencies (load-bearing things
 grow) · **glow/opacity** = state · gold **seam** = a link (solid `uses`, dashed `partOf`).
 
+### When you add / remove / rename a field or state
+
+Most of the app reads `taxonomy.json` at runtime, but a few spots reference the keys by hand
+and must be kept in sync:
+
+1. **`taxonomy.json`** — add/remove the entry. A new **field** needs a distinct `color`.
+2. **`.github/ISSUE_TEMPLATE/fragment.yml`** — sync the *Field* dropdown options (fields only).
+   Update it in **both** this repo **and** the `tessera-backlog` repo.
+3. **`skills/tessera-manifest-gen/detect.mjs`** — update the `typeGuess` (fields) / `statusGuess`
+   (states) heuristics if the changed key is one they emit, then `npm run pack-skill` + reinstall.
+4. **Existing `tessera.yaml` manifests** — migrate any that use a removed/renamed key. The next
+   `npm run build` rejects unknown values and logs them, so it tells you which to fix.
+5. **`scripts/aggregate.mjs`** — only if you rename the special **`fragment`** state key (it's
+   referenced by name when turning issues into tiles).
+6. **`scripts/demo/make-demo.mjs`** — only if you still use the demo; update keys, then `npm run demo`.
+
+No change needed in the site (`docs/index.html`) or `scripts/validate.mjs` — both read
+`taxonomy.json` dynamically.
+
 ---
 
 ## Deploy (GitHub Pages)
@@ -181,7 +219,7 @@ out of the box. Replace it with a real `npm run build` once your token and confi
 tessera/
 ├── taxonomy.json            # vocabulary: fields + states (source of truth)
 ├── tessera.config.json      # what to scan
-├── examples/tessera.yaml    # the manifest spec, commented
+├── examples/tessera.example.yaml  # the manifest spec, commented (ignored by the scan)
 ├── .github/ISSUE_TEMPLATE/fragment.yml
 ├── scripts/
 │   ├── aggregate.mjs        # the weekly job (npm run build)

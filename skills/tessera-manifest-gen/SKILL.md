@@ -68,7 +68,7 @@ are computed by the aggregator — never write them.
 
 6. **Write** the file at `<TARGET>/tessera.yaml`, in this exact field order:
    `id, name, type, status, owner, summary, whenToUse, uses, partOf, tags, links`.
-   Use [`examples/tessera.yaml`](../../examples/tessera.yaml) as the formatting reference.
+   Use [`examples/tessera.example.yaml`](../../examples/tessera.example.yaml) as the formatting reference.
    If `existingManifest` is present, update it in place rather than blindly overwriting —
    preserve human edits, only change what's needed.
 
