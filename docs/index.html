@@ -26,24 +26,34 @@
     color:var(--gold-bright);text-shadow:0 0 14px #e8b04b55}
   .brand .tag{color:var(--muted);font-size:12px;border-left:1px solid var(--border);padding-left:12px}
   .spacer{flex:1}
-  .search{position:relative}
+  .search{position:relative;display:flex;align-items:center}
   .search input{background:#081a25;border:1px solid var(--border);color:var(--txt);
-    border-radius:6px;padding:8px 14px 8px 32px;font-size:13px;width:220px;outline:none}
+    border-radius:8px;height:38px;padding:0 14px 0 36px;font-size:13px;width:248px;outline:none}
+  .search input::placeholder{color:#5f7689}
   .search input:focus{border-color:var(--gold);box-shadow:0 0 0 2px #e8b04b22}
-  .search svg{position:absolute;left:10px;top:9px;opacity:.5}
+  .search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);opacity:.55;pointer-events:none}
   .toggle{display:flex;border:1px solid var(--border);border-radius:6px;overflow:hidden;background:#081a25}
   .toggle button{background:none;border:none;color:var(--muted);padding:8px 15px;cursor:pointer;
     font-size:12.5px;font-weight:600;letter-spacing:.5px}
   .toggle button.active{background:linear-gradient(180deg,#e8b04b,#c9913a);color:#1a1205}
   main{flex:1;position:relative;overflow:hidden}
   #stage{position:absolute;inset:0}
-  svg{width:100%;height:100%;display:block;cursor:grab}
-  svg:active{cursor:grabbing}
+  #svg{width:100%;height:100%;display:block;cursor:grab}
+  #svg:active{cursor:grabbing}
   .panel-card{background:var(--panel);backdrop-filter:blur(10px);border:1px solid var(--border);
     border-radius:10px;box-shadow:0 8px 30px #00000050, inset 0 0 0 1px #ffffff06}
-  .filters{position:absolute;top:16px;left:16px;width:206px;padding:15px 17px;z-index:20;font-size:12px}
-  .filters h4{margin:0 0 9px;font-size:10.5px;text-transform:uppercase;letter-spacing:1.5px;color:var(--gold);font-family:'Cinzel',serif}
-  .filters .grp{margin-bottom:16px}
+  .filters{position:absolute;top:16px;left:16px;width:212px;padding:0;z-index:20;font-size:12px;overflow:hidden}
+  .filters-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 14px;cursor:pointer;
+    font-family:'Cinzel',serif;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);user-select:none}
+  .filters-head:hover{color:var(--gold-bright)}
+  .filters-head .chev{font-size:10px;color:var(--muted);transition:transform .2s}
+  .filters.collapsed{width:auto}
+  .filters.collapsed #filterBody{display:none}
+  .filters.collapsed .filters-head .chev{transform:rotate(-90deg)}
+  #filterBody{padding:0 16px 14px}
+  .filters h4{margin:13px 0 9px;font-size:10.5px;text-transform:uppercase;letter-spacing:1.5px;color:var(--gold);font-family:'Cinzel',serif}
+  .filters .grp:first-child h4{margin-top:2px}
+  .filters .grp{margin-bottom:13px}
   .chk{display:flex;align-items:center;gap:8px;padding:3px 0;cursor:pointer;color:var(--txt)}
   .chk input{accent-color:var(--gold)}
   .hexmark{width:11px;height:12px;flex:none;clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%)}
@@ -72,16 +82,30 @@
   .seam.dash{background:none;border-top:1px dashed var(--gold)}
   .links a{display:inline-flex;align-items:center;gap:6px;margin:8px 12px 0 0;color:var(--cyan);text-decoration:none;font-size:13px;font-weight:600}
   .meta-row{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:14px;padding-top:12px;border-top:1px solid var(--border)}
-  #tableWrap{position:absolute;inset:0;overflow:auto;padding:24px 28px;display:none}
+  #tableWrap{position:absolute;inset:0;overflow:auto;padding:26px 30px 40px;display:none}
   #tableWrap.show{display:block}
+  .index-head{max-width:1180px;margin:0 auto 16px;display:flex;align-items:baseline;gap:14px}
+  .index-head h2{font-family:'Cinzel',serif;color:var(--gold-bright);font-size:18px;letter-spacing:2px;margin:0;text-transform:uppercase}
+  .index-head .count{color:var(--cyan);font-size:13px;font-weight:600}
+  .index-head .hint{color:var(--muted);font-size:12px;margin-left:auto}
+  .index-card{max-width:1180px;margin:0 auto;border:1px solid var(--border);border-radius:12px;overflow:hidden;
+    background:#091a26;box-shadow:0 10px 36px #00000055, inset 0 0 0 1px #ffffff06}
   table{width:100%;border-collapse:collapse;font-size:13px}
-  th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:top}
-  th{position:sticky;top:0;background:#0a1c28;color:var(--gold);font-size:10.5px;text-transform:uppercase;letter-spacing:1.3px;cursor:pointer;z-index:2;font-family:'Cinzel',serif}
-  tr:hover td{background:#0b2230}
-  td .name{font-weight:600;cursor:pointer}
+  th,td{text-align:left;padding:12px 16px;vertical-align:top}
+  th{position:sticky;top:0;background:#0c2231;color:var(--gold);font-size:10px;text-transform:uppercase;
+    letter-spacing:1.2px;cursor:pointer;z-index:2;font-family:'Cinzel',serif;border-bottom:1px solid var(--border);white-space:nowrap}
+  th:hover{color:var(--gold-bright)}
+  tbody td{border-bottom:1px solid #112733}
+  tbody tr:last-child td{border-bottom:none}
+  tbody tr{cursor:pointer}
+  tbody tr:nth-child(even) td{background:#0b1f2c}
+  tbody tr:hover td{background:#11303f}
+  td .name{font-weight:600;color:var(--txt)}
   td .name:hover{color:var(--gold-bright)}
-  .pill{font-size:11px;padding:2px 9px;border-radius:5px;border:1px solid;white-space:nowrap}
-  .num{text-align:center;color:var(--muted)}
+  td.summary{color:#c6d4dc;max-width:320px}
+  td.use{color:var(--muted);max-width:240px}
+  .pill{font-size:11px;padding:3px 10px;border-radius:20px;border:1px solid;white-space:nowrap;font-weight:600}
+  .num{text-align:center;color:var(--muted);font-variant-numeric:tabular-nums}
   .tooltip{position:absolute;pointer-events:none;background:#0a1c28;border:1px solid var(--gold);border-radius:6px;padding:6px 11px;font-size:12px;z-index:40;opacity:0;transition:opacity .12s;white-space:nowrap;box-shadow:0 0 16px #e8b04b33}
   .freshness{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);color:var(--muted);font-size:11.5px;background:#0a1c28cc;padding:7px 16px;border-radius:20px;border:1px solid var(--border);z-index:15;display:flex;align-items:center;gap:9px}
   .freshness .pulse{width:7px;height:7px;border-radius:50%;background:var(--cyan);box-shadow:0 0 8px var(--cyan);animation:pulse 2.4s ease-in-out infinite}
@@ -114,12 +138,18 @@
   <main>
     <div id="stage"><svg id="svg"></svg></div>
     <div class="filters panel-card" id="filters">
-      <div class="grp"><h4>Fields</h4><div id="typeFilters"></div></div>
-      <div class="grp"><h4>State</h4><div id="statusFilters"></div></div>
-      <div class="grp"><h4>Reading the mosaic</h4><div class="legend-note">Tile <b>size</b> = pieces that depend on it (bigger = load-bearing).<br><b>Glow</b> = maturity. Gold <b>seams</b> link tiles: solid = <i>depends on</i>, dashed = <i>part of</i>.</div></div>
+      <div class="filters-head" id="filtersHead"><span>Filters</span><span class="chev" id="filtersChev">▾</span></div>
+      <div id="filterBody">
+        <div class="grp"><h4>Fields</h4><div id="typeFilters"></div></div>
+        <div class="grp"><h4>State</h4><div id="statusFilters"></div></div>
+        <div class="grp"><h4>Reading the mosaic</h4><div class="legend-note">Tile <b>size</b> = pieces that depend on it (bigger = load-bearing).<br><b>Glow</b> = maturity. Gold <b>seams</b> link tiles: solid = <i>depends on</i>, dashed = <i>part of</i>.</div></div>
+      </div>
     </div>
     <div class="detail" id="detail"></div>
-    <div id="tableWrap"><table id="table"></table></div>
+    <div id="tableWrap">
+      <div class="index-head"><h2>Index</h2><span class="count" id="indexCount"></span><span class="hint">click a row to open it on the mosaic</span></div>
+      <div class="index-card"><table id="table"></table></div>
+    </div>
     <div class="freshness" id="freshness"><span class="pulse"></span><span id="freshTxt"></span></div>
     <div id="overlay"><div class="box"><h3>Serve the mosaic</h3>
       <p>This page loads <code>data.json</code> over HTTP, which a browser blocks on <code>file://</code>.<br><br>
@@ -190,7 +220,8 @@ function init(){
     l.innerHTML=`<input type="checkbox" checked data-status="${k}"><span class="hexmark" style="background:${v.color}"></span>${v.label}`;statusBox.appendChild(l);});
   typeBox.addEventListener('change',e=>{const t=e.target.dataset.type;e.target.checked?state.visibleTypes.add(t):state.visibleTypes.delete(t);refresh();});
   statusBox.addEventListener('change',e=>{const s=e.target.dataset.status;e.target.checked?state.visibleStatus.add(s):state.visibleStatus.delete(s);refresh();});
-  document.getElementById('search').addEventListener('input',e=>{state.query=e.target.value.toLowerCase().trim();refresh();});
+  document.getElementById('search').addEventListener('input',e=>{state.query=e.target.value.toLowerCase().trim();refresh();renderTable();});
+  document.getElementById('filtersHead').onclick=()=>document.getElementById('filters').classList.toggle('collapsed');
 
   // svg setup
   const svg=d3.select('#svg'),stage=document.getElementById('stage');
@@ -210,6 +241,17 @@ function init(){
   const typeKeys=Object.keys(FIELDS),cols=Math.ceil(Math.sqrt(typeKeys.length)),anchor={};
   typeKeys.forEach((t,i)=>{anchor[t]={x:(i%cols+0.5)/cols,y:(Math.floor(i/cols)+0.5)/Math.ceil(typeKeys.length/cols)};});
   const ax=n=>anchor[n.type].x*W,ay=n=>anchor[n.type].y*H,radius=n=>10+Math.sqrt(n.inDeg)*6;
+
+  // frame the whole graph on its centre of gravity
+  function fitView(dur=600){
+    if(!NODES.length || NODES[0].x===undefined) return;
+    let x0=Infinity,x1=-Infinity,y0=Infinity,y1=-Infinity;
+    NODES.forEach(n=>{const r=radius(n);x0=Math.min(x0,n.x-r);x1=Math.max(x1,n.x+r);y0=Math.min(y0,n.y-r);y1=Math.max(y1,n.y+r);});
+    const w=x1-x0||1,h=y1-y0||1,pad=70;
+    const scale=Math.max(0.4,Math.min(2,Math.min((W-2*pad)/w,(H-2*pad)/h)));
+    const tx=W/2-scale*(x0+x1)/2, ty=H/2-scale*(y0+y1)/2;
+    svg.transition().duration(dur).call(zoom.transform,d3.zoomIdentity.translate(tx,ty).scale(scale));
+  }
 
   const sim=d3.forceSimulation(NODES)
     .force('link',d3.forceLink(LINKS).id(d=>d.id).distance(78).strength(.25))
@@ -303,15 +345,16 @@ function init(){
     const th=(k,l)=>`<th data-k="${k}">${l}${sortKey===k?(sortDir<0?' ▾':' ▴'):''}</th>`;
     let h=`<thead><tr>${th('name','Tessera')}${th('type','Field')}${th('status','State')}${th('owner','Owner')}<th>What it is</th><th>When to use</th>${th('inDeg','◂ rely')}${th('updated','Updated')}</tr></thead><tbody>`;
     rows.forEach(n=>{const t=FIELDS[n.type],s=STATES[n.status];
-      h+=`<tr><td><span class="name" data-go="${n.id}">${n.name}</span></td>
+      h+=`<tr data-go="${n.id}"><td><span class="name">${n.name}</span></td>
         <td><span class="pill" style="color:${t.raw};border-color:${t.raw}66">${t.label}</span></td>
         <td><span class="pill" style="color:${s.color};border-color:${s.color}66">${s.label}</span></td>
-        <td style="color:var(--muted)">${n.owner}</td><td>${n.summary}</td><td style="color:var(--muted)">${n.use||'—'}</td>
+        <td style="color:var(--muted)">${n.owner}</td><td class="summary">${n.summary}</td><td class="use">${n.use||'—'}</td>
         <td class="num">${n.inDeg||''}</td><td class="num">${n.updatedAt?ago(n.updatedAt):'—'}</td></tr>`;});
     h+='</tbody>';document.getElementById('table').innerHTML=h;
+    const ic=document.getElementById('indexCount');if(ic)ic.textContent=rows.length===NODES.length?`${NODES.length} tesserae`:`${rows.length} of ${NODES.length} shown`;
     document.querySelectorAll('#table th[data-k]').forEach(th=>th.onclick=()=>{const k=th.dataset.k;
       if(sortKey===k)sortDir*=-1;else{sortKey=k;sortDir=(k==='inDeg'||k==='updated')?-1:1;}renderTable();});
-    document.querySelectorAll('#table [data-go]').forEach(el=>el.onclick=()=>{setView('mosaic');select(el.dataset.go);});
+    document.querySelectorAll('#table tbody tr[data-go]').forEach(tr=>tr.onclick=()=>{setView('mosaic');select(tr.dataset.go);});
   }
   const btnM=document.getElementById('btnMosaic'),btnI=document.getElementById('btnIndex');
   function setView(v){const idx=v==='index';
@@ -326,8 +369,12 @@ function init(){
   document.getElementById('freshTxt').innerHTML=`Mosaic assembled <b style="color:var(--cyan)">${ago(new Date(GENERATED_AT).toISOString())}</b> · ${NODES.length} tesserae · ${frags} fragments`;
 
   window.addEventListener('resize',()=>{W=stage.clientWidth;H=stage.clientHeight;
-    sim.force('x',d3.forceX(ax).strength(.18)).force('y',d3.forceY(ay).strength(.18));sim.alpha(.3).restart();});
+    sim.force('x',d3.forceX(ax).strength(.18)).force('y',d3.forceY(ay).strength(.18));
+    sim.alpha(.4).restart();setTimeout(()=>fitView(),650);});
+
   refresh();renderTable();
+  // settle the layout up front, then frame it on its centre (no fly-in)
+  sim.stop(); sim.tick(260); ticked(); fitView(0);
 }
 boot();
 </script>
