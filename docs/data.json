@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-06-10T22:49:07.881Z",
+  "generatedAt": "2026-06-10T23:09:55.828Z",
   "stats": {
     "mode": "org",
-    "reposScanned": 5,
+    "reposScanned": 23,
     "tesserae": 2,
     "fragments": 0
   },
@@ -28,7 +28,7 @@
         "demo": null
       },
       "isFragment": false,
-      "updatedAt": "2026-06-10T22:29:29Z"
+      "updatedAt": "2026-06-10T23:01:22Z"
     },
     {
       "id": "tessera",
@@ -51,7 +51,7 @@
         "demo": null
       },
       "isFragment": false,
-      "updatedAt": "2026-06-10T22:29:29Z"
+      "updatedAt": "2026-06-10T23:02:06Z"
     }
   ]
 }
