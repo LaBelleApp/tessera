@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-11T14:06:01.570Z",
+  "generatedAt": "2026-06-11T22:53:20.157Z",
   "stats": {
     "mode": "org",
     "reposScanned": 24,
@@ -16,9 +16,10 @@
       "summary": "Command-line tool to scaffold and manage AIO Flutter projects — generates the aio.yaml manifest and wires in features from the AIO registry.",
       "whenToUse": "Reach for it to create or configure an AIO app and add prebuilt features from the AIO registry.",
       "uses": [
-        "aio-registry"
+        "aio-registry",
+        "aio"
       ],
-      "partOf": "aio",
+      "partOf": null,
       "tags": [
         "aio",
         "cli",
@@ -31,7 +32,7 @@
         "demo": null
       },
       "isFragment": false,
-      "updatedAt": "2026-06-11T09:37:55Z"
+      "updatedAt": "2026-06-11T22:50:24Z"
     },
     {
       "id": "aio-registry",
