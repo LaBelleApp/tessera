@@ -6,7 +6,7 @@ import path from 'node:path';
 
 const DIR = path.join(process.cwd(), 'docs');
 const PORT = process.env.PORT || 4173;
-const MIME = { '.html': 'text/html', '.json': 'application/json', '.js': 'text/javascript', '.css': 'text/css', '.svg': 'image/svg+xml' };
+const MIME = { '.html': 'text/html', '.json': 'application/json', '.js': 'text/javascript', '.css': 'text/css', '.svg': 'image/svg+xml', '.png': 'image/png', '.ico': 'image/x-icon' };
 
 http.createServer((req, res) => {
   let p = decodeURIComponent(req.url.split('?')[0]);
