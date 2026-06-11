@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-11T09:54:45.048Z",
+  "generatedAt": "2026-06-11T09:59:58.710Z",
   "stats": {
     "mode": "org",
     "reposScanned": 24,
@@ -91,7 +91,7 @@
       "summary": "Appcast RSS feed (rss.xml) that forces Grévin to update to the latest version.",
       "whenToUse": "Reference for hosting a forced-update appcast feed for an app.",
       "uses": [],
-      "partOf": null,
+      "partOf": "aio",
       "tags": [
         "appcast",
         "updates",
@@ -104,7 +104,7 @@
         "demo": null
       },
       "isFragment": false,
-      "updatedAt": "2026-06-11T09:50:48Z"
+      "updatedAt": "2026-06-11T09:58:34Z"
     },
     {
       "id": "flair-appcast",
@@ -115,7 +115,7 @@
       "summary": "Appcast RSS feed (rss.xml) that forces Flair to update to the latest version.",
       "whenToUse": "Reference for hosting a forced-update appcast feed for an app.",
       "uses": [],
-      "partOf": null,
+      "partOf": "aio",
       "tags": [
         "appcast",
         "updates",
@@ -128,7 +128,7 @@
         "demo": null
       },
       "isFragment": false,
-      "updatedAt": "2026-06-11T09:50:03Z"
+      "updatedAt": "2026-06-11T09:59:02Z"
     },
     {
       "id": "smartcleaner",
@@ -193,7 +193,7 @@
       "summary": "Appcast RSS feed (rss.xml) that forces Homee to update to the latest version.",
       "whenToUse": "Reference for hosting a forced-update appcast feed for an app.",
       "uses": [],
-      "partOf": null,
+      "partOf": "aio",
       "tags": [
         "appcast",
         "updates",
@@ -206,7 +206,7 @@
         "demo": null
       },
       "isFragment": false,
-      "updatedAt": "2026-06-11T09:49:02Z"
+      "updatedAt": "2026-06-11T09:59:14Z"
     },
     {
       "id": "aio-relay",
@@ -333,7 +333,7 @@
         "demo": null
       },
       "isFragment": false,
-      "updatedAt": "2026-06-10T23:01:22Z"
+      "updatedAt": "2026-06-11T09:55:06Z"
     },
     {
       "id": "tessera",
@@ -356,7 +356,7 @@
         "demo": null
       },
       "isFragment": false,
-      "updatedAt": "2026-06-11T07:45:07Z"
+      "updatedAt": "2026-06-11T09:55:17Z"
     },
     {
       "id": "belt",
