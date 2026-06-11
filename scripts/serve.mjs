@@ -13,6 +13,6 @@ http.createServer((req, res) => {
   if (p === '/') p = '/index.html';
   const file = path.join(DIR, p);
   if (!file.startsWith(DIR) || !fs.existsSync(file)) { res.writeHead(404); return res.end('not found'); }
-  res.writeHead(200, { 'Content-Type': MIME[path.extname(file)] || 'application/octet-stream' });
+  res.writeHead(200, { 'Content-Type': MIME[path.extname(file)] || 'application/octet-stream', 'Cache-Control': 'no-cache' });
   fs.createReadStream(file).pipe(res);
 }).listen(PORT, () => console.log(`Tessera preview → http://localhost:${PORT}`));

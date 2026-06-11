@@ -147,6 +147,21 @@
   .freshness{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);color:var(--muted);font-size:11.5px;background:#0a1c28cc;padding:7px 16px;border-radius:20px;border:1px solid var(--border);z-index:15;display:flex;align-items:center;gap:9px;max-width:92vw}
   .freshness .pulse{width:7px;height:7px;border-radius:50%;background:var(--cyan);box-shadow:0 0 8px var(--cyan);animation:pulse 2.4s ease-in-out infinite;flex:none}
   @keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
+  .grp-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .grp-head h4{margin:13px 0 9px}
+  .toggle-all{background:none;border:none;color:var(--muted);font-size:10px;letter-spacing:.5px;cursor:pointer;text-transform:uppercase;font-family:'Cinzel',serif;padding:2px 4px}
+  .toggle-all:hover{color:var(--gold-bright)}
+  .viewctrls{position:absolute;bottom:16px;left:16px;z-index:18;display:flex;gap:8px}
+  .vc{background:#0a1c28cc;border:1px solid var(--border);color:var(--muted);border-radius:20px;padding:7px 13px;font-size:12px;font-weight:600;cursor:pointer;backdrop-filter:blur(6px);transition:background .15s,color .15s,border-color .15s}
+  .vc:hover{color:var(--txt);border-color:#2c5168}
+  .vc.active{background:linear-gradient(180deg,#e8b04b,#c9913a);color:#1a1205;border-color:#e8b04b}
+  .vc.info{width:36px;height:36px;border-radius:50%;padding:0;display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:15px;color:var(--gold);position:relative}
+  .vc.info:not(:hover){animation:infopulse 2.6s ease-in-out infinite}
+  @keyframes infopulse{0%{box-shadow:0 0 0 0 #e8b04b55}70%{box-shadow:0 0 0 11px #e8b04b00}100%{box-shadow:0 0 0 0 #e8b04b00}}
+  .legend-pop{position:absolute;bottom:46px;left:0;width:250px;background:#0a1c28f5;border:1px solid var(--border);border-radius:10px;padding:12px 14px;font-size:11.5px;line-height:1.6;color:var(--muted);box-shadow:0 12px 30px #00000077;opacity:0;visibility:hidden;transform:translateY(6px);transition:opacity .15s,transform .15s,visibility .15s;text-align:left;pointer-events:none}
+  .vc.info:hover .legend-pop{opacity:1;visibility:visible;transform:translateY(0)}
+  .legend-pop h5{margin:0 0 7px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:var(--gold)}
+  .legend-pop b{color:var(--gold-bright);font-weight:600}
   #emptyMosaic{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:var(--muted);font-size:14px;display:none;z-index:10;text-align:center}
   #loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;z-index:46;color:var(--muted)}
   #loading .spin{width:34px;height:34px;border:3px solid #ffffff14;border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite}
@@ -183,19 +198,19 @@
     <div class="filters panel-card" id="filters">
       <div class="filters-head" id="filtersHead"><span>Filters</span><span class="chev" id="filtersChev">▾</span></div>
       <div id="filterBody">
-        <div class="grp"><h4>Fields</h4><div id="typeFilters"></div></div>
-        <div class="grp"><h4>State</h4><div id="statusFilters"></div></div>
-        <div class="grp"><h4>Display</h4>
-          <label class="chk"><input type="checkbox" id="iconsToggle" checked><span class="flabel">Field icons</span></label>
-          <label class="chk"><input type="checkbox" id="impactToggle"><span class="flabel">Impact view (downstream)</span></label>
-        </div>
-        <div class="grp"><h4>Reading the mosaic</h4><div class="legend-note">Tile <b>size</b> = pieces that depend on it. <b>Glow</b> = maturity. Gold <b>seams</b>: solid = <i>depends on</i>, dashed = <i>part of</i>.<br>A <b style="color:var(--stale)">●</b> marks a tile untouched for 6+ months.</div></div>
+        <div class="grp"><div class="grp-head"><h4>Fields</h4><button type="button" class="toggle-all" data-group="type">None</button></div><div id="typeFilters"></div></div>
+        <div class="grp"><div class="grp-head"><h4>State</h4><button type="button" class="toggle-all" data-group="status">None</button></div><div id="statusFilters"></div></div>
       </div>
     </div>
     <div class="detail" id="detail"></div>
     <div id="tableWrap">
       <div class="index-head"><h2>Index</h2><span class="count" id="indexCount"></span><span class="hint">click a row to open it · ◆ to jump to the mosaic</span></div>
       <div class="index-card"><table id="table"></table></div>
+    </div>
+    <div class="viewctrls" id="viewctrls">
+      <button class="vc info" id="legendBtn" aria-label="How to read the mosaic">i<div class="legend-pop"><h5>Reading the mosaic</h5>Tile <b>size</b> = pieces that depend on it. <b>Glow</b> = maturity. Gold <b>seams</b>: solid = <i>depends on</i>, dashed = <i>part of</i>.<br>A <b style="color:var(--stale)">●</b> marks a tile untouched for 6+ months.</div></button>
+      <button class="vc" id="iconsToggle" title="Show a glyph per field on each tile">◎ Icons</button>
+      <button class="vc" id="impactToggle" title="On select, highlight transitive downstream dependents">⇲ Impact</button>
     </div>
     <div class="freshness" id="freshness"><span class="pulse"></span><span id="freshTxt"></span></div>
     <div id="loading"><div class="spin"></div><div class="lt">Assembling the mosaic…</div></div>
@@ -217,17 +232,19 @@ const STALE_DAYS = 180;
 const ICONS = {
   'client-app':'<rect x="7" y="3" width="10" height="18" rx="2"/><line x1="10.5" y1="18" x2="13.5" y2="18"/>',
   'internal-app':'<rect x="4" y="5" width="16" height="11" rx="1"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="16" x2="12" y2="20"/>',
-  'framework':'<polygon points="12,3 21,8 12,13 3,8"/><polyline points="3,12 12,17 21,12"/>',
+  'framework':'<polygon points="12,5 21,10 12,15 3,10"/><polyline points="3,14 12,19 21,14"/>',
   'package':'<path d="M12 3 21 7.5V16.5L12 21 3 16.5V7.5Z"/><polyline points="3,7.5 12,12 21,7.5"/><line x1="12" y1="12" x2="12" y2="21"/>',
-  'template':'<rect x="4" y="4" width="11" height="14" rx="1"/><path d="M9 8h11v12H9"/>',
+  'template':'<rect x="8" y="3" width="11" height="14" rx="2"/><rect x="5" y="7" width="11" height="14" rx="2"/>',
   'cli':'<rect x="3" y="5" width="18" height="14" rx="2"/><polyline points="7,10 10,12.5 7,15"/><line x1="12" y1="15.2" x2="16" y2="15.2"/>',
   'tool':'<circle cx="12" cy="12" r="3.4"/><line x1="12" y1="2.5" x2="12" y2="5.5"/><line x1="12" y1="18.5" x2="12" y2="21.5"/><line x1="2.5" y1="12" x2="5.5" y2="12"/><line x1="18.5" y1="12" x2="21.5" y2="12"/><line x1="5.2" y1="5.2" x2="7.3" y2="7.3"/><line x1="16.7" y1="16.7" x2="18.8" y2="18.8"/><line x1="18.8" y1="5.2" x2="16.7" y2="7.3"/><line x1="7.3" y1="16.7" x2="5.2" y2="18.8"/>',
   'site':'<circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="9"/><line x1="3" y1="12" x2="21" y2="12"/>',
   'service':'<rect x="4" y="4" width="16" height="7" rx="1"/><rect x="4" y="13" width="16" height="7" rx="1"/><circle cx="7" cy="7.5" r="0.6"/><circle cx="7" cy="16.5" r="0.6"/>',
-  'distribution':'<path d="M21 3 3 11l7 2 2 7z"/><line x1="21" y1="3" x2="10" y2="13"/>',
+  'distribution':'<path d="M12 3v10"/><path d="M8 7l4-4 4 4"/><path d="M5 14v5h14v-5"/>',
   'experiment':'<path d="M9 3h6M10 3v6l-5 9a1.5 1.5 0 0 0 1.3 2.2h11.4A1.5 1.5 0 0 0 19 18l-5-9V3"/><line x1="8" y1="14" x2="16" y2="14"/>',
-  'skill':'<path d="M12 3l1.9 4.6L18.5 9l-4.6 1.4L12 15l-1.9-4.6L5.5 9l4.6-1.4z"/>',
+  'skill':'<path d="M12 1.8 14.7 9.3 22 12 14.7 14.7 12 22.2 9.3 14.7 2 12 9.3 9.3Z"/>',
 };
+// all glyphs use the clean line style; (kept as an extension point for filled emblems)
+const EMBLEMS = new Set();
 
 async function boot(){
   const loading=document.getElementById('loading');
@@ -283,7 +300,7 @@ function init(){
   }
   NODES.forEach(n=>{const cp=completeness(n);n._cp=cp;n.score=cp?cp.score:-1;});
 
-  const state={selected:null,visibleTypes:new Set(Object.keys(FIELDS)),visibleStatus:new Set(Object.keys(STATES)),query:'',icons:true,impact:false};
+  const state={selected:null,visibleTypes:new Set(Object.keys(FIELDS)),visibleStatus:new Set(Object.keys(STATES)),query:'',icons:false,impact:false};
   let curView='mosaic';
   const nodeVisible=n=>state.visibleTypes.has(n.type)&&state.visibleStatus.has(n.status)
     && (!state.query || (n.name+' '+n.id+' '+n.summary+' '+n.owner+' '+(n.tags||[]).join(' ')).toLowerCase().includes(state.query));
@@ -297,7 +314,7 @@ function init(){
     if(state.visibleTypes.size!==Object.keys(FIELDS).length)p.set('fields',[...state.visibleTypes].join(','));
     if(state.visibleStatus.size!==Object.keys(STATES).length)p.set('states',[...state.visibleStatus].join(','));
     if(state.impact)p.set('impact','1');
-    if(!state.icons)p.set('icons','0');
+    if(state.icons)p.set('icons','1');
     const s=p.toString();
     history.replaceState(null,'',s?('#'+s):(location.pathname+location.search));
   }
@@ -309,7 +326,7 @@ function init(){
     if(p.get('states'))state.visibleStatus=new Set(p.get('states').split(',').filter(k=>STATES[k]));
     if(p.get('q')){state.query=p.get('q').toLowerCase();}
     state.impact=p.get('impact')==='1';
-    state.icons=p.get('icons')!=='0';
+    state.icons=p.get('icons')==='1';
     pendingView=p.get('view')==='index'?'index':'mosaic';
     pendingTile=(p.get('tile')&&byId[p.get('tile')])?p.get('tile'):null;
   })();
@@ -329,12 +346,24 @@ function init(){
   searchEl.addEventListener('input',e=>{state.query=e.target.value.toLowerCase().trim();refresh();renderTable();writeHash();});
   document.getElementById('filtersHead').onclick=()=>document.getElementById('filters').classList.toggle('collapsed');
   const iconsToggle=document.getElementById('iconsToggle'),impactToggle=document.getElementById('impactToggle');
-  iconsToggle.onchange=e=>{state.icons=e.target.checked;refresh();writeHash();};
-  impactToggle.onchange=e=>{state.impact=e.target.checked;refresh();writeHash();};
+  iconsToggle.onclick=()=>{state.icons=!state.icons;iconsToggle.classList.toggle('active',state.icons);refresh();writeHash();};
+  impactToggle.onclick=()=>{state.impact=!state.impact;impactToggle.classList.toggle('active',state.impact);refresh();writeHash();};
+  // select-all / deselect-all per filter group
+  const typeAllBtn=document.querySelector('.toggle-all[data-group="type"]');
+  const statusAllBtn=document.querySelector('.toggle-all[data-group="status"]');
+  function setAll(group,on){
+    if(group==='type')state.visibleTypes=on?new Set(Object.keys(FIELDS)):new Set();
+    else state.visibleStatus=on?new Set(Object.keys(STATES)):new Set();
+    syncFilterUI();refresh();renderTable();fitView();writeHash();
+  }
+  typeAllBtn.onclick=()=>setAll('type',state.visibleTypes.size!==Object.keys(FIELDS).length);
+  statusAllBtn.onclick=()=>setAll('status',state.visibleStatus.size!==Object.keys(STATES).length);
   function syncFilterUI(){
     typeBox.querySelectorAll('input[data-type]').forEach(i=>i.checked=state.visibleTypes.has(i.dataset.type));
     statusBox.querySelectorAll('input[data-status]').forEach(i=>i.checked=state.visibleStatus.has(i.dataset.status));
-    iconsToggle.checked=state.icons; impactToggle.checked=state.impact; searchEl.value=state.query;
+    iconsToggle.classList.toggle('active',state.icons); impactToggle.classList.toggle('active',state.impact); searchEl.value=state.query;
+    typeAllBtn.textContent=state.visibleTypes.size===Object.keys(FIELDS).length?'None':'All';
+    statusAllBtn.textContent=state.visibleStatus.size===Object.keys(STATES).length?'None':'All';
   }
   function focusFilter(dim,key){
     if(dim==='type'){state.visibleTypes=new Set([key]);state.visibleStatus=new Set(Object.keys(STATES));}
@@ -397,8 +426,10 @@ function init(){
   ent.append('path').attr('class','halo').attr('filter','url(#glowTile)');
   ent.append('path').attr('class','facet');
   ent.append('path').attr('class','sheen');
-  ent.append('g').attr('class','glyph').attr('fill','none').attr('stroke','#08161f').attr('stroke-width',2)
-    .attr('stroke-linecap','round').attr('stroke-linejoin','round').html(d=>ICONS[d.type]||'');
+  // a clean inlaid glyph: EMBLEM types are filled solids, the rest are line glyphs
+  ent.append('g').attr('class','glyph').attr('stroke-linecap','round').attr('stroke-linejoin','round')
+    .attr('stroke-width',d=>EMBLEMS.has(d.type)?0:2)
+    .attr('fill',d=>EMBLEMS.has(d.type)?'#0a1c28':'none').attr('stroke',d=>EMBLEMS.has(d.type)?'none':'#0a1c28').html(d=>ICONS[d.type]||'');
   ent.append('path').attr('class','bezel').attr('fill','none');
   ent.append('circle').attr('class','stale-dot');
   ent.append('text').attr('class','lbl').attr('text-anchor','middle').attr('fill','#d7e6ec').attr('font-size','10.5px').attr('font-weight','500').attr('paint-order','stroke').attr('stroke','#06121a').attr('stroke-width','3px').style('pointer-events','none');
@@ -420,8 +451,8 @@ function init(){
       el.select('.facet').attr('d',hexPath(r)).attr('fill',col).attr('fill-opacity',0.9);
       el.select('.sheen').attr('d',hexPath(r*0.62)).attr('transform',`translate(0,${-r*0.22})`).attr('fill','#fff').attr('fill-opacity',state.icons?0.10:0.16);
       el.select('.halo').attr('d',hexPath(r+((s.glow||isSel)?7:3))).attr('fill',col).attr('opacity',(s.glow||isSel)?0.5:0.18);
-      const gs=(r*1.35)/24;
-      el.select('.glyph').attr('transform',`translate(${-12*gs},${-12*gs}) scale(${gs})`).style('display',(state.icons&&r>=12)?null:'none').attr('opacity',0.85);
+      const gs=(r*1.15)/24, ox=-12*gs, oy=-12*gs;
+      el.select('.glyph').attr('transform',`translate(${ox},${oy}) scale(${gs})`).style('display',state.icons?null:'none').attr('opacity',EMBLEMS.has(d.type)?0.48:0.55);
       el.select('.bezel').attr('d',hexPath(r)).attr('stroke',isSel?'#ffd98a':'#e8b04b').attr('stroke-width',isSel?2.4:1.4)
         .attr('stroke-dasharray',s.dashed?'3 3':null).attr('filter',isSel?'url(#glowGold)':null);
       el.select('.stale-dot').attr('cx',r*0.6).attr('cy',-r*0.66).attr('r',3).attr('fill','var(--stale)').attr('stroke','#06121a').attr('stroke-width',1).style('display',isStale(d)?null:'none');
@@ -511,6 +542,7 @@ function init(){
     document.getElementById('tableWrap').classList.toggle('show',idx);
     document.getElementById('stage').style.display=idx?'none':'block';
     document.getElementById('filters').style.display=idx?'none':'flex';
+    document.getElementById('viewctrls').style.display=idx?'none':'flex';
     document.getElementById('freshness').style.display=idx?'none':'flex';
     document.getElementById('emptyMosaic').style.display='none';
     btnI.classList.toggle('active',idx);btnM.classList.toggle('active',!idx);if(idx)renderTable();else refresh();writeHash();}
