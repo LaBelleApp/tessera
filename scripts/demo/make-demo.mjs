@@ -42,6 +42,15 @@ const F = [
   ['ai-codegen','AI Codegen','experiment','fragment','R&D',2,'Generate full screens from a description.','No clear product goal yet.',[],null],
   ['voice-ui','Voice UI','experiment','testing','R&D',9,'Navigate an app with voice commands.','Accessibility.',['ui-kit'],null],
   ['design-tokens','Design Tokens','experiment','fragment','R&D',30,'Design tokens synced Figma <-> code.','Unify design and dev.',['ui-kit'],null],
+  // templates (boilerplates / starters)
+  ['app-template','App Template','template','working','Platform',12,'Boilerplate to start a new Flutter app the house way.','Bootstrap a new app project.',['flutter-core'],null],
+  ['pkg-template','Package Template','template','testing','Platform',25,'Starter for a new internal Flutter package.','Bootstrap a new package.',['flutter-core'],null],
+  // services (backend / config feeds)
+  ['update-service','Update Service','service','working','DevOps',9,'In-app update prompts (appcast feeds).','Manage forced / optional update popups.',['deploy-cli'],null],
+  ['push-gateway','Push Gateway','service','testing','Backend',14,'Cross-app push notification gateway.','Send notifications across apps.',[],null],
+  // distribution (release / store delivery)
+  ['store-publish','Store Publish','distribution','maintained','DevOps',6,'Automated store submission & release pipeline.','Ship a build to the App Store / Play Store.',['deploy-cli'],null],
+  ['fastlane-lanes','Fastlane Lanes','distribution','working','DevOps',18,'Shared Fastlane lanes for signing & upload.','Standardize release automation.',['store-publish'],null],
   // a brand-new repo with an empty tessera.yaml → onboarded as a bare fragment
   ['secret-project','Secret Project','experiment','fragment','unassigned',0,'','',[],null],
 ];
@@ -53,10 +62,13 @@ const TAGS = {
   'banking-app':['fintech','mobile'], 'retail-app':['ecommerce','mobile'], 'health-app':['health','mobile'],
   'fitness-app':['health','mobile'], 'media-app':['media','mobile'], 'energy-app':['iot','mobile'],
   'voice-ui':['accessibility'], 'design-tokens':['design','figma'],
+  'app-template':['flutter','boilerplate'], 'pkg-template':['flutter','boilerplate'],
+  'update-service':['updates'], 'push-gateway':['notifications'],
+  'store-publish':['release','stores'], 'fastlane-lanes':['release','ci'],
 };
 
 // a few have docs → the completeness score varies across tiles
-const DOCS = new Set(['flutter-core','ui-kit','auth-module','deploy-cli','tessera','banking-app','retail-app','scaffold-cli']);
+const DOCS = new Set(['flutter-core','ui-kit','auth-module','deploy-cli','tessera','banking-app','retail-app','scaffold-cli','app-template','store-publish']);
 
 const tesserae = F.map(([id,name,type,status,owner,d,summary,whenToUse,uses,partOf]) => ({
   id, name, type, status, owner, summary, whenToUse,
