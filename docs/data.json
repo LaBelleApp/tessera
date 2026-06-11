@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-11T09:59:58.710Z",
+  "generatedAt": "2026-06-11T14:06:01.570Z",
   "stats": {
     "mode": "org",
     "reposScanned": 24,
@@ -356,13 +356,13 @@
         "demo": null
       },
       "isFragment": false,
-      "updatedAt": "2026-06-11T09:55:17Z"
+      "updatedAt": "2026-06-11T13:24:13Z"
     },
     {
       "id": "belt",
       "name": "Belt",
       "type": "tool",
-      "status": "working",
+      "status": "maintained",
       "owner": "LaBelleApp",
       "summary": "Local, Obsidian-friendly task board that Claude drains automatically, running post-task actions after each card.",
       "whenToUse": "Reach for it to queue tasks for Claude to work through autonomously, one isolated board per project.",
@@ -380,7 +380,7 @@
         "demo": null
       },
       "isFragment": false,
-      "updatedAt": "2026-06-10T23:18:50Z"
+      "updatedAt": "2026-06-11T10:10:40Z"
     },
     {
       "id": "app-spec-builder",

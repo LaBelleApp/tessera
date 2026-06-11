@@ -55,9 +55,13 @@ const TAGS = {
   'voice-ui':['accessibility'], 'design-tokens':['design','figma'],
 };
 
+// a few have docs → the completeness score varies across tiles
+const DOCS = new Set(['flutter-core','ui-kit','auth-module','deploy-cli','tessera','banking-app','retail-app','scaffold-cli']);
+
 const tesserae = F.map(([id,name,type,status,owner,d,summary,whenToUse,uses,partOf]) => ({
   id, name, type, status, owner, summary, whenToUse,
-  uses, partOf, tags: TAGS[id] || [], links: { repo: `https://github.com/my-org/${id}` },
+  uses, partOf, tags: TAGS[id] || [],
+  links: { repo: `https://github.com/my-org/${id}`, doc: DOCS.has(id) ? `https://docs.my-org.dev/${id}` : null },
   updatedAt: at(d), isFragment: status === 'fragment',
 }));
 

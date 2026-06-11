@@ -16,7 +16,7 @@
 <style>
   :root{
     --bg:#06121a; --panel:#0b1e2bee; --border:#1c3a4a;
-    --txt:#e9f2f5; --muted:#7f9bab; --gold:#e8b04b; --gold-bright:#ffd98a; --cyan:#4fd6e0;
+    --txt:#e9f2f5; --muted:#7f9bab; --gold:#e8b04b; --gold-bright:#ffd98a; --cyan:#4fd6e0; --stale:#ef6b5e;
   }
   *{box-sizing:border-box}
   html,body{margin:0;height:100%;overflow:hidden;background:
@@ -38,6 +38,7 @@
   .search input::placeholder{color:#5f7689}
   .search input:focus{border-color:var(--gold);box-shadow:0 0 0 2px #e8b04b22}
   .search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);opacity:.55;pointer-events:none}
+  .search .kbd{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:10px;color:#566b7d;border:1px solid var(--border);border-radius:4px;padding:1px 5px;pointer-events:none}
   .toggle{display:flex;border:1px solid var(--border);border-radius:6px;overflow:hidden;background:#081a25}
   .toggle button{background:none;border:none;color:var(--muted);padding:8px 15px;cursor:pointer;
     font-size:12.5px;font-weight:600;letter-spacing:.5px}
@@ -48,7 +49,7 @@
   #svg:active{cursor:grabbing}
   .panel-card{background:var(--panel);backdrop-filter:blur(10px);border:1px solid var(--border);
     border-radius:10px;box-shadow:0 8px 30px #00000050, inset 0 0 0 1px #ffffff06}
-  .filters{position:absolute;top:16px;left:16px;width:212px;padding:0;z-index:20;font-size:12px;overflow:hidden}
+  .filters{position:absolute;top:16px;left:16px;width:212px;padding:0;z-index:20;font-size:12px;overflow:hidden;max-height:calc(100vh - 96px);display:flex;flex-direction:column}
   .filters-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 14px;cursor:pointer;
     font-family:'Cinzel',serif;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);user-select:none}
   .filters-head:hover{color:var(--gold-bright)}
@@ -56,7 +57,8 @@
   .filters.collapsed{width:auto}
   .filters.collapsed #filterBody{display:none}
   .filters.collapsed .filters-head .chev{transform:rotate(-90deg)}
-  #filterBody{padding:0 16px 14px}
+  #filterBody{padding:0 16px 14px;overflow-y:auto;scrollbar-width:none}
+  #filterBody::-webkit-scrollbar{display:none}
   .filters h4{margin:13px 0 9px;font-size:10.5px;text-transform:uppercase;letter-spacing:1.5px;color:var(--gold);font-family:'Cinzel',serif}
   .filters .grp:first-child h4{margin-top:2px}
   .filters .grp{margin-bottom:13px}
@@ -90,6 +92,9 @@
   .field{margin:15px 0}
   .field .lbl{font-size:10.5px;text-transform:uppercase;letter-spacing:1.3px;color:var(--gold);margin-bottom:5px;font-family:'Cinzel',serif}
   .field .val{font-size:13.5px;line-height:1.55}
+  .scorecard{display:flex;flex-wrap:wrap;gap:6px}
+  .sc{font-size:11px;border:1px solid var(--border);border-radius:5px;padding:2px 7px;color:#6b7d8c}
+  .sc.ok{color:var(--cyan);border-color:#22d3ee55}
   .tagrow{display:flex;flex-wrap:wrap;gap:6px}
   .tag{font-size:11px;color:var(--muted);border:1px solid var(--border);border-radius:20px;padding:2px 9px;cursor:pointer;transition:border-color .15s,color .15s}
   .tag:hover{border-color:var(--gold);color:var(--gold-bright)}
@@ -107,14 +112,14 @@
   .meta-row{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:14px;padding-top:12px;border-top:1px solid var(--border)}
   #tableWrap{position:absolute;inset:0;overflow:auto;padding:26px 30px 40px;display:none}
   #tableWrap.show{display:block}
-  .index-head{max-width:1180px;margin:0 auto 16px;display:flex;align-items:baseline;gap:14px}
+  .index-head{max-width:1240px;margin:0 auto 16px;display:flex;align-items:baseline;gap:14px}
   .index-head h2{font-family:'Cinzel',serif;color:var(--gold-bright);font-size:18px;letter-spacing:2px;margin:0;text-transform:uppercase}
   .index-head .count{color:var(--cyan);font-size:13px;font-weight:600}
   .index-head .hint{color:var(--muted);font-size:12px;margin-left:auto}
-  .index-card{max-width:1180px;margin:0 auto;border:1px solid var(--border);border-radius:12px;
+  .index-card{max-width:1240px;margin:0 auto;border:1px solid var(--border);border-radius:12px;
     overflow:auto;max-height:calc(100vh - 180px);
     background:#091a26;box-shadow:0 10px 36px #00000055, inset 0 0 0 1px #ffffff06}
-  table{width:100%;min-width:1080px;border-collapse:collapse;font-size:13px}
+  table{width:100%;min-width:1180px;border-collapse:collapse;font-size:13px}
   th,td{text-align:left;padding:12px 16px;vertical-align:top}
   th{position:sticky;top:0;background:#0c2231;color:var(--gold);font-size:10px;text-transform:uppercase;
     letter-spacing:1.2px;cursor:pointer;z-index:2;font-family:'Cinzel',serif;border-bottom:1px solid var(--border);white-space:nowrap}
@@ -133,13 +138,20 @@
   td.use span{max-width:240px}
   .pill{font-size:11px;padding:3px 10px;border-radius:20px;border:1px solid;white-space:nowrap;font-weight:600}
   .num{text-align:center;color:var(--muted);font-variant-numeric:tabular-nums}
+  .num.stale{color:var(--stale)}
+  .empty-row td{color:var(--muted);text-align:center;padding:30px}
   /* keep scrolling, hide the scrollbars */
   .index-card,#tableWrap,.detail{scrollbar-width:none;-ms-overflow-style:none}
   .index-card::-webkit-scrollbar,#tableWrap::-webkit-scrollbar,.detail::-webkit-scrollbar{width:0;height:0;display:none}
   .tooltip{position:absolute;pointer-events:none;background:#0a1c28;border:1px solid var(--gold);border-radius:6px;padding:6px 11px;font-size:12px;z-index:40;opacity:0;transition:opacity .12s;white-space:nowrap;box-shadow:0 0 16px #e8b04b33;max-width:340px;overflow:hidden;text-overflow:ellipsis}
-  .freshness{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);color:var(--muted);font-size:11.5px;background:#0a1c28cc;padding:7px 16px;border-radius:20px;border:1px solid var(--border);z-index:15;display:flex;align-items:center;gap:9px}
-  .freshness .pulse{width:7px;height:7px;border-radius:50%;background:var(--cyan);box-shadow:0 0 8px var(--cyan);animation:pulse 2.4s ease-in-out infinite}
+  .freshness{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);color:var(--muted);font-size:11.5px;background:#0a1c28cc;padding:7px 16px;border-radius:20px;border:1px solid var(--border);z-index:15;display:flex;align-items:center;gap:9px;max-width:92vw}
+  .freshness .pulse{width:7px;height:7px;border-radius:50%;background:var(--cyan);box-shadow:0 0 8px var(--cyan);animation:pulse 2.4s ease-in-out infinite;flex:none}
   @keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
+  #emptyMosaic{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:var(--muted);font-size:14px;display:none;z-index:10;text-align:center}
+  #loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;z-index:46;color:var(--muted)}
+  #loading .spin{width:34px;height:34px;border:3px solid #ffffff14;border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite}
+  #loading .lt{font-family:'Cinzel',serif;letter-spacing:1px;color:var(--gold-bright);font-size:13px}
+  @keyframes spin{to{transform:rotate(360deg)}}
   #overlay{position:absolute;inset:0;display:none;align-items:center;justify-content:center;z-index:50;text-align:center;padding:30px}
   #overlay .box{max-width:460px}
   #overlay h3{font-family:'Cinzel',serif;color:var(--gold-bright);letter-spacing:1px}
@@ -162,25 +174,31 @@
     </div>
     <div class="spacer"></div>
     <div class="search"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7f9bab" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
-      <input id="search" placeholder="Search the mosaic…" autocomplete="off"></div>
+      <input id="search" placeholder="Search the mosaic…" autocomplete="off"><span class="kbd">/</span></div>
     <div class="toggle"><button id="btnMosaic" class="active">◆ MOSAIC</button><button id="btnIndex">▤ INDEX</button></div>
   </header>
   <main>
     <div id="stage"><svg id="svg"></svg></div>
+    <div id="emptyMosaic">No tesserae match your filters.</div>
     <div class="filters panel-card" id="filters">
       <div class="filters-head" id="filtersHead"><span>Filters</span><span class="chev" id="filtersChev">▾</span></div>
       <div id="filterBody">
         <div class="grp"><h4>Fields</h4><div id="typeFilters"></div></div>
         <div class="grp"><h4>State</h4><div id="statusFilters"></div></div>
-        <div class="grp"><h4>Reading the mosaic</h4><div class="legend-note">Tile <b>size</b> = pieces that depend on it (bigger = load-bearing).<br><b>Glow</b> = maturity. Gold <b>seams</b> link tiles: solid = <i>depends on</i>, dashed = <i>part of</i>.</div></div>
+        <div class="grp"><h4>Display</h4>
+          <label class="chk"><input type="checkbox" id="iconsToggle" checked><span class="flabel">Field icons</span></label>
+          <label class="chk"><input type="checkbox" id="impactToggle"><span class="flabel">Impact view (downstream)</span></label>
+        </div>
+        <div class="grp"><h4>Reading the mosaic</h4><div class="legend-note">Tile <b>size</b> = pieces that depend on it. <b>Glow</b> = maturity. Gold <b>seams</b>: solid = <i>depends on</i>, dashed = <i>part of</i>.<br>A <b style="color:var(--stale)">●</b> marks a tile untouched for 6+ months.</div></div>
       </div>
     </div>
     <div class="detail" id="detail"></div>
     <div id="tableWrap">
-      <div class="index-head"><h2>Index</h2><span class="count" id="indexCount"></span><span class="hint">click a row to open it on the mosaic</span></div>
+      <div class="index-head"><h2>Index</h2><span class="count" id="indexCount"></span><span class="hint">click a row to open it · ◆ to jump to the mosaic</span></div>
       <div class="index-card"><table id="table"></table></div>
     </div>
     <div class="freshness" id="freshness"><span class="pulse"></span><span id="freshTxt"></span></div>
+    <div id="loading"><div class="spin"></div><div class="lt">Assembling the mosaic…</div></div>
     <div id="overlay"><div class="box"><h3>Serve the mosaic</h3>
       <p>This page loads <code>data.json</code> over HTTP, which a browser blocks on <code>file://</code>.<br><br>
       From the repo root, run <code>npm run serve</code> and open <code>http://localhost:4173</code> — or publish <code>docs/</code> with GitHub Pages.</p></div></div>
@@ -190,22 +208,37 @@
 
 <script>
 // ============================================================
-//  TESSERA — data-driven. Loads ./taxonomy.json + ./data.json,
-//  both produced by the aggregation script (npm run build).
-//  Each tile declares only outgoing seams (uses / part-of);
-//  "relied on by" and "contains" are derived here.
+//  TESSERA — data-driven. Loads ./taxonomy.json + ./data.json.
 // ============================================================
 let FIELDS, STATES, NODES, GENERATED_AT, STATS;
+const STALE_DAYS = 180;
+
+// one compact glyph per field (drawn in a 24x24 box; stroke set on the group)
+const ICONS = {
+  'client-app':'<rect x="7" y="3" width="10" height="18" rx="2"/><line x1="10.5" y1="18" x2="13.5" y2="18"/>',
+  'internal-app':'<rect x="4" y="5" width="16" height="11" rx="1"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="16" x2="12" y2="20"/>',
+  'framework':'<polygon points="12,3 21,8 12,13 3,8"/><polyline points="3,12 12,17 21,12"/>',
+  'package':'<path d="M12 3 21 7.5V16.5L12 21 3 16.5V7.5Z"/><polyline points="3,7.5 12,12 21,7.5"/><line x1="12" y1="12" x2="12" y2="21"/>',
+  'template':'<rect x="4" y="4" width="11" height="14" rx="1"/><path d="M9 8h11v12H9"/>',
+  'cli':'<rect x="3" y="5" width="18" height="14" rx="2"/><polyline points="7,10 10,12.5 7,15"/><line x1="12" y1="15.2" x2="16" y2="15.2"/>',
+  'tool':'<circle cx="12" cy="12" r="3.4"/><line x1="12" y1="2.5" x2="12" y2="5.5"/><line x1="12" y1="18.5" x2="12" y2="21.5"/><line x1="2.5" y1="12" x2="5.5" y2="12"/><line x1="18.5" y1="12" x2="21.5" y2="12"/><line x1="5.2" y1="5.2" x2="7.3" y2="7.3"/><line x1="16.7" y1="16.7" x2="18.8" y2="18.8"/><line x1="18.8" y1="5.2" x2="16.7" y2="7.3"/><line x1="7.3" y1="16.7" x2="5.2" y2="18.8"/>',
+  'site':'<circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="9"/><line x1="3" y1="12" x2="21" y2="12"/>',
+  'service':'<rect x="4" y="4" width="16" height="7" rx="1"/><rect x="4" y="13" width="16" height="7" rx="1"/><circle cx="7" cy="7.5" r="0.6"/><circle cx="7" cy="16.5" r="0.6"/>',
+  'distribution':'<path d="M21 3 3 11l7 2 2 7z"/><line x1="21" y1="3" x2="10" y2="13"/>',
+  'experiment':'<path d="M9 3h6M10 3v6l-5 9a1.5 1.5 0 0 0 1.3 2.2h11.4A1.5 1.5 0 0 0 19 18l-5-9V3"/><line x1="8" y1="14" x2="16" y2="14"/>',
+  'skill':'<path d="M12 3l1.9 4.6L18.5 9l-4.6 1.4L12 15l-1.9-4.6L5.5 9l4.6-1.4z"/>',
+};
 
 async function boot(){
-  if(location.protocol==='file:'){ document.getElementById('overlay').style.display='flex'; return; }
+  const loading=document.getElementById('loading');
+  if(location.protocol==='file:'){ loading.style.display='none'; document.getElementById('overlay').style.display='flex'; return; }
   let tax, data;
   try{
     [tax, data] = await Promise.all([
       fetch('./taxonomy.json').then(r=>r.json()),
       fetch('./data.json').then(r=>r.json()),
     ]);
-  }catch(e){ document.getElementById('overlay').style.display='flex'; return; }
+  }catch(e){ loading.style.display='none'; document.getElementById('overlay').style.display='flex'; return; }
 
   FIELDS=Object.fromEntries(tax.fields.map(f=>[f.key,{label:f.label,color:f.color,raw:f.color}]));
   STATES=Object.fromEntries(tax.states.map(s=>[s.key,{label:s.label,op:s.brightness,
@@ -218,10 +251,10 @@ async function boot(){
     tags:t.tags||[],links:t.links||{},updatedAt:t.updatedAt,
   }));
   init();
+  loading.style.display='none';
 }
 
 function init(){
-  // keep only seams whose endpoints exist (defensive)
   const byId=Object.fromEntries(NODES.map(n=>[n.id,n]));
   const LINKS=[];
   NODES.forEach(n=>{
@@ -236,37 +269,80 @@ function init(){
   const partOfOf=id=>LINKS.filter(l=>l.source===id&&l.kind==='part-of').map(l=>l.target);
   const adj={}; NODES.forEach(n=>adj[n.id]=new Set());
   LINKS.forEach(l=>{adj[l.source].add(l.target);adj[l.target].add(l.source);});
+  // direct dependents (who uses X) → for transitive impact
+  const dependents={}; NODES.forEach(n=>dependents[n.id]=[]);
+  LINKS.forEach(l=>{ if(l.kind==='uses') dependents[l.target].push(l.source); });
+  function downstreamClosure(id){const seen=new Set(),q=[id];while(q.length){const x=q.shift();(dependents[x]||[]).forEach(y=>{if(!seen.has(y)){seen.add(y);q.push(y);}});}return seen;}
 
-  const state={selected:null,visibleTypes:new Set(Object.keys(FIELDS)),visibleStatus:new Set(Object.keys(STATES)),query:''};
+  // ---- staleness + completeness ----
+  const isStale=n=>n.status!=='fragment'&&n.updatedAt&&(GENERATED_AT-new Date(n.updatedAt).getTime())>STALE_DAYS*864e5;
+  function completeness(n){
+    if(n.status==='fragment') return null;
+    const c=[!!n.owner&&n.owner!=='unassigned', !!n.summary, !!n.use, !!(n.links&&n.links.doc), !isStale(n)];
+    return {checks:c, score:c.filter(Boolean).length, total:5};
+  }
+  NODES.forEach(n=>{const cp=completeness(n);n._cp=cp;n.score=cp?cp.score:-1;});
+
+  const state={selected:null,visibleTypes:new Set(Object.keys(FIELDS)),visibleStatus:new Set(Object.keys(STATES)),query:'',icons:true,impact:false};
+  let curView='mosaic';
   const nodeVisible=n=>state.visibleTypes.has(n.type)&&state.visibleStatus.has(n.status)
     && (!state.query || (n.name+' '+n.id+' '+n.summary+' '+n.owner+' '+(n.tags||[]).join(' ')).toLowerCase().includes(state.query));
+
+  // ---- URL hash (shareable state) ----
+  function writeHash(){
+    const p=new URLSearchParams();
+    if(curView==='index')p.set('view','index');
+    if(state.selected)p.set('tile',state.selected);
+    if(state.query)p.set('q',state.query);
+    if(state.visibleTypes.size!==Object.keys(FIELDS).length)p.set('fields',[...state.visibleTypes].join(','));
+    if(state.visibleStatus.size!==Object.keys(STATES).length)p.set('states',[...state.visibleStatus].join(','));
+    if(state.impact)p.set('impact','1');
+    if(!state.icons)p.set('icons','0');
+    const s=p.toString();
+    history.replaceState(null,'',s?('#'+s):(location.pathname+location.search));
+  }
+  let pendingView='mosaic',pendingTile=null;
+  (function readHash(){
+    const h=location.hash.replace(/^#/,''); if(!h)return;
+    const p=new URLSearchParams(h);
+    if(p.get('fields'))state.visibleTypes=new Set(p.get('fields').split(',').filter(k=>FIELDS[k]));
+    if(p.get('states'))state.visibleStatus=new Set(p.get('states').split(',').filter(k=>STATES[k]));
+    if(p.get('q')){state.query=p.get('q').toLowerCase();}
+    state.impact=p.get('impact')==='1';
+    state.icons=p.get('icons')!=='0';
+    pendingView=p.get('view')==='index'?'index':'mosaic';
+    pendingTile=(p.get('tile')&&byId[p.get('tile')])?p.get('tile'):null;
+  })();
 
   // filters
   const typeBox=document.getElementById('typeFilters');
   Object.entries(FIELDS).forEach(([k,v])=>{const l=document.createElement('label');l.className='chk';
-    l.innerHTML=`<input type="checkbox" checked data-type="${k}"><span class="hexmark" style="background:${v.color}"></span><span class="flabel">${v.label}</span><button type="button" class="focus" data-focus-type="${k}" title="Focus on ${v.label}">◎</button>`;typeBox.appendChild(l);});
+    l.innerHTML=`<input type="checkbox" data-type="${k}"><span class="hexmark" style="background:${v.color}"></span><span class="flabel">${v.label}</span><button type="button" class="focus" data-focus-type="${k}" title="Focus on ${v.label}">◎</button>`;typeBox.appendChild(l);});
   const statusBox=document.getElementById('statusFilters');
   Object.entries(STATES).forEach(([k,v])=>{const l=document.createElement('label');l.className='chk';
-    l.innerHTML=`<input type="checkbox" checked data-status="${k}"><span class="hexmark" style="background:${v.color}"></span><span class="flabel">${v.label}</span><button type="button" class="focus" data-focus-status="${k}" title="Focus on ${v.label}">◎</button>`;statusBox.appendChild(l);});
-  typeBox.addEventListener('change',e=>{const t=e.target.dataset.type;if(!t)return;e.target.checked?state.visibleTypes.add(t):state.visibleTypes.delete(t);refresh();renderTable();});
-  statusBox.addEventListener('change',e=>{const s=e.target.dataset.status;if(!s)return;e.target.checked?state.visibleStatus.add(s):state.visibleStatus.delete(s);refresh();renderTable();});
+    l.innerHTML=`<input type="checkbox" data-status="${k}"><span class="hexmark" style="background:${v.color}"></span><span class="flabel">${v.label}</span><button type="button" class="focus" data-focus-status="${k}" title="Focus on ${v.label}">◎</button>`;statusBox.appendChild(l);});
+  typeBox.addEventListener('change',e=>{const t=e.target.dataset.type;if(!t)return;e.target.checked?state.visibleTypes.add(t):state.visibleTypes.delete(t);refresh();renderTable();writeHash();});
+  statusBox.addEventListener('change',e=>{const s=e.target.dataset.status;if(!s)return;e.target.checked?state.visibleStatus.add(s):state.visibleStatus.delete(s);refresh();renderTable();writeHash();});
   typeBox.addEventListener('click',e=>{const b=e.target.closest('.focus');if(!b)return;e.preventDefault();e.stopPropagation();focusFilter('type',b.dataset.focusType);});
   statusBox.addEventListener('click',e=>{const b=e.target.closest('.focus');if(!b)return;e.preventDefault();e.stopPropagation();focusFilter('status',b.dataset.focusStatus);});
-  document.getElementById('search').addEventListener('input',e=>{state.query=e.target.value.toLowerCase().trim();refresh();renderTable();});
+  const searchEl=document.getElementById('search');
+  searchEl.addEventListener('input',e=>{state.query=e.target.value.toLowerCase().trim();refresh();renderTable();writeHash();});
   document.getElementById('filtersHead').onclick=()=>document.getElementById('filters').classList.toggle('collapsed');
+  const iconsToggle=document.getElementById('iconsToggle'),impactToggle=document.getElementById('impactToggle');
+  iconsToggle.onchange=e=>{state.icons=e.target.checked;refresh();writeHash();};
+  impactToggle.onchange=e=>{state.impact=e.target.checked;refresh();writeHash();};
   function syncFilterUI(){
     typeBox.querySelectorAll('input[data-type]').forEach(i=>i.checked=state.visibleTypes.has(i.dataset.type));
     statusBox.querySelectorAll('input[data-status]').forEach(i=>i.checked=state.visibleStatus.has(i.dataset.status));
+    iconsToggle.checked=state.icons; impactToggle.checked=state.impact; searchEl.value=state.query;
   }
-  // solo a single filter and frame the mosaic on its tesserae
   function focusFilter(dim,key){
     if(dim==='type'){state.visibleTypes=new Set([key]);state.visibleStatus=new Set(Object.keys(STATES));}
     else{state.visibleStatus=new Set([key]);state.visibleTypes=new Set(Object.keys(FIELDS));}
-    state.query='';document.getElementById('search').value='';
-    syncFilterUI();setView('mosaic');refresh();renderTable();fitView();
+    state.query='';searchEl.value='';
+    syncFilterUI();setView('mosaic');refresh();renderTable();fitView();writeHash();
   }
-  // set the search to a tag (used by clickable tag chips)
-  function searchTag(tag){const s=document.getElementById('search');s.value=tag;state.query=String(tag).toLowerCase();refresh();renderTable();}
+  function searchTag(tag){searchEl.value=tag;state.query=String(tag).toLowerCase();refresh();renderTable();writeHash();}
 
   // svg setup
   const svg=d3.select('#svg'),stage=document.getElementById('stage');
@@ -287,7 +363,6 @@ function init(){
   typeKeys.forEach((t,i)=>{anchor[t]={x:(i%cols+0.5)/cols,y:(Math.floor(i/cols)+0.5)/Math.ceil(typeKeys.length/cols)};});
   const ax=n=>anchor[n.type].x*W,ay=n=>anchor[n.type].y*H,radius=n=>10+Math.sqrt(n.inDeg)*6;
 
-  // frame the whole graph on its centre of gravity
   function fitView(dur=600){
     const vis=NODES.filter(nodeVisible), list=vis.length?vis:NODES;
     if(!list.length || list[0].x===undefined) return;
@@ -298,7 +373,6 @@ function init(){
     const tx=W/2-scale*(x0+x1)/2, ty=H/2-scale*(y0+y1)/2;
     svg.transition().duration(dur).call(zoom.transform,d3.zoomIdentity.translate(tx,ty).scale(scale));
   }
-  // pan/zoom the mosaic so a single tile sits centred in the visible area
   function centerOnNode(n,scale=1.3,dur=600){
     if(!n||n.x===undefined) return;
     const cx=detail.classList.contains('open')?(W-350)/2:W/2;
@@ -323,28 +397,41 @@ function init(){
   ent.append('path').attr('class','halo').attr('filter','url(#glowTile)');
   ent.append('path').attr('class','facet');
   ent.append('path').attr('class','sheen');
+  ent.append('g').attr('class','glyph').attr('fill','none').attr('stroke','#08161f').attr('stroke-width',2)
+    .attr('stroke-linecap','round').attr('stroke-linejoin','round').html(d=>ICONS[d.type]||'');
   ent.append('path').attr('class','bezel').attr('fill','none');
+  ent.append('circle').attr('class','stale-dot');
   ent.append('text').attr('class','lbl').attr('text-anchor','middle').attr('fill','#d7e6ec').attr('font-size','10.5px').attr('font-weight','500').attr('paint-order','stroke').attr('stroke','#06121a').attr('stroke-width','3px').style('pointer-events','none');
   nodeSel=ent;
 
   function refresh(){
-    const sel=state.selected,neigh=sel?adj[sel]:null;
+    const sel=state.selected;
+    const impactSet=(sel&&state.impact)?downstreamClosure(sel):null;
+    const neigh=sel?(state.impact?impactSet:adj[sel]):null;
+    const hiNodes=sel?(state.impact?new Set([sel,...impactSet]):null):null;
+    let visCount=0;
     nodeSel.each(function(d){
       const vis=nodeVisible(d),t=FIELDS[d.type],s=STATES[d.status],r=radius(d);
+      if(vis)visCount++;
       const isSel=sel===d.id,isNeigh=sel&&neigh.has(d.id);
       let op=vis?s.op:0.06; if(sel&&!isSel&&!isNeigh)op=vis?Math.min(op,0.15):0.04;
       const el=d3.select(this),col=s.desat?'#48586a':t.raw;
       el.style('display',(vis||sel)?null:'none').style('opacity',op);
       el.select('.facet').attr('d',hexPath(r)).attr('fill',col).attr('fill-opacity',0.9);
-      el.select('.sheen').attr('d',hexPath(r*0.62)).attr('transform',`translate(0,${-r*0.22})`).attr('fill','#fff').attr('fill-opacity',0.16);
+      el.select('.sheen').attr('d',hexPath(r*0.62)).attr('transform',`translate(0,${-r*0.22})`).attr('fill','#fff').attr('fill-opacity',state.icons?0.10:0.16);
       el.select('.halo').attr('d',hexPath(r+((s.glow||isSel)?7:3))).attr('fill',col).attr('opacity',(s.glow||isSel)?0.5:0.18);
+      const gs=(r*1.35)/24;
+      el.select('.glyph').attr('transform',`translate(${-12*gs},${-12*gs}) scale(${gs})`).style('display',(state.icons&&r>=12)?null:'none').attr('opacity',0.85);
       el.select('.bezel').attr('d',hexPath(r)).attr('stroke',isSel?'#ffd98a':'#e8b04b').attr('stroke-width',isSel?2.4:1.4)
         .attr('stroke-dasharray',s.dashed?'3 3':null).attr('filter',isSel?'url(#glowGold)':null);
+      el.select('.stale-dot').attr('cx',r*0.6).attr('cy',-r*0.66).attr('r',3).attr('fill','var(--stale)').attr('stroke','#06121a').attr('stroke-width',1).style('display',isStale(d)?null:'none');
       el.select('.lbl').attr('y',r+14).text(d.name.length>20?d.name.slice(0,19)+'…':d.name).style('display',(r>12||isSel||isNeigh)?null:'none');
     });
-    linkSel.each(function(l){const visL=nodeVisible(l.source)&&nodeVisible(l.target);let op,w;
-      if(sel){const on=l.source.id===sel||l.target.id===sel;op=on?0.95:0.05;w=on?2:1;}else{op=visL?0.22:0.03;w=1;}
-      d3.select(this).attr('opacity',op).attr('stroke-width',w).attr('filter',(sel&&(l.source.id===sel||l.target.id===sel))?'url(#glowGold)':null);});
+    linkSel.each(function(l){const visL=nodeVisible(l.source)&&nodeVisible(l.target);let op,w,on;
+      if(sel){ on=state.impact?(hiNodes.has(l.source.id)&&hiNodes.has(l.target.id)):(l.source.id===sel||l.target.id===sel); op=on?0.95:0.05;w=on?2:1;}
+      else{op=visL?0.22:0.03;w=1;on=false;}
+      d3.select(this).attr('opacity',op).attr('stroke-width',w).attr('filter',on?'url(#glowGold)':null);});
+    document.getElementById('emptyMosaic').style.display=(curView==='mosaic'&&visCount===0)?'block':'none';
   }
   function ticked(){linkSel.attr('x1',d=>d.source.x).attr('y1',d=>d.source.y).attr('x2',d=>d.target.x).attr('y2',d=>d.target.y);
     nodeSel.attr('transform',d=>`translate(${d.x},${d.y})`);}
@@ -358,16 +445,17 @@ function init(){
     return d<=0?'today':d===1?'yesterday':d<30?d+' days ago':d<60?'a month ago':Math.round(d/30)+' months ago';};
   function renderDetail(id){
     const n=byId[id],t=FIELDS[n.type],s=STATES[n.status];
-    const dep=dependsOn(id),po=partOfOf(id),rb=reliedBy(id),ct=contains(id);
+    const dep=dependsOn(id),po=partOfOf(id),rb=reliedBy(id),ct=contains(id),cp=n._cp;
     let h=`<button class="close">×</button>
       <div class="detail-head">
         <button class="go-mosaic" title="View on the mosaic"><svg viewBox="0 0 40 44" width="40" height="44"><defs><linearGradient id="gmF" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#143442"/><stop offset="1" stop-color="#0a1c28"/></linearGradient></defs><polygon points="20,2 38,12 38,32 20,42 2,32 2,12" fill="url(#gmF)" stroke="#ffd98a" stroke-width="2.4"/><polygon points="20,12 28,16.5 28,27.5 20,32 12,27.5 12,16.5" fill="#4fd6e0" opacity=".3" stroke="#4fd6e0" stroke-width="1.2"/><circle cx="20" cy="22" r="3.4" fill="#ffd98a"/></svg></button>
         <div class="head-text"><div class="kicker" style="color:${t.raw}">${t.label}</div><h2>${n.name}</h2><div class="id">${n.id}</div></div>
       </div>
-      <div class="badges">${badge(s.color,'◆ '+s.label)}${n.inDeg?badge('#ffd98a',n.inDeg+' rely on this'):''}</div>
-      <div class="field"><div class="lbl">What it is</div><div class="val">${n.summary}</div></div>
-      <div class="field"><div class="lbl">When to use it</div><div class="val">${n.use||'—'}</div></div>
+      <div class="badges">${badge(s.color,'◆ '+s.label)}${n.inDeg?badge('#ffd98a',n.inDeg+' rely on this'):''}${isStale(n)?badge('#ef6b5e','● stale'):''}</div>
+      <div class="field"><div class="lbl">What it is</div><div class="val">${n.summary||'<span style="color:var(--muted)">—</span>'}</div></div>
+      <div class="field"><div class="lbl">When to use it</div><div class="val">${n.use||'<span style="color:var(--muted)">—</span>'}</div></div>
       <div class="field"><div class="lbl">Owner</div><div class="val">${n.owner}</div></div>`;
+    if(cp)h+=`<div class="field"><div class="lbl">Completeness · ${cp.score}/5</div><div class="scorecard">${[['Owner',cp.checks[0]],['Summary',cp.checks[1]],['When to use',cp.checks[2]],['Doc link',cp.checks[3]],['Fresh',cp.checks[4]]].map(([lbl,ok])=>`<span class="sc ${ok?'ok':''}">${ok?'✓':'○'} ${lbl}</span>`).join('')}</div></div>`;
     if(dep.length)h+=`<div class="field"><div class="lbl">Depends on</div><ul class="rel-list">${dep.map(x=>relItem(x,false)).join('')}</ul></div>`;
     if(po.length) h+=`<div class="field"><div class="lbl">Part of</div><ul class="rel-list">${po.map(x=>relItem(x,true)).join('')}</ul></div>`;
     if(rb.length) h+=`<div class="field"><div class="lbl">Relied on by · computed</div><ul class="rel-list">${rb.map(x=>relItem(x,false)).join('')}</ul></div>`;
@@ -378,17 +466,17 @@ function init(){
     if(L.doc)lk.push(`<a href="${L.doc}" target="_blank" rel="noopener">↗ Docs</a>`);
     if(L.demo)lk.push(`<a href="${L.demo}" target="_blank" rel="noopener">↗ Demo</a>`);
     if(lk.length)h+=`<div class="field links">${lk.join('')}</div>`;
-    h+=`<div class="meta-row"><span>Last updated</span><span>${n.updatedAt?ago(n.updatedAt):'—'}</span></div>`;
+    h+=`<div class="meta-row"><span>Last updated</span><span style="${isStale(n)?'color:var(--stale)':''}">${n.updatedAt?ago(n.updatedAt):'—'}${isStale(n)?' · stale':''}</span></div>`;
     detail.innerHTML=h;detail.classList.add('open');
     detail.querySelector('.close').onclick=()=>select(null);
     const gm=detail.querySelector('.go-mosaic');if(gm)gm.onclick=()=>{setView('mosaic');select(id);centerOnNode(byId[id]);};
     detail.querySelectorAll('[data-go]').forEach(li=>li.onclick=()=>select(li.dataset.go));
     detail.querySelectorAll('[data-tag]').forEach(el=>el.onclick=()=>searchTag(el.dataset.tag));
   }
-  function select(id){state.selected=id;if(id)renderDetail(id);else detail.classList.remove('open');refresh();renderTable();}
+  function select(id){state.selected=id;if(id)renderDetail(id);else detail.classList.remove('open');refresh();renderTable();writeHash();}
 
   const tip=document.getElementById('tooltip');
-  function showTip(e,d){tip.textContent=d.name+' — '+STATES[d.status].label;tip.style.opacity=1;moveTip(e);}
+  function showTip(e,d){tip.textContent=d.name+' — '+STATES[d.status].label+(isStale(d)?' · stale':'');tip.style.opacity=1;moveTip(e);}
   function moveTip(e){tip.style.left=(e.clientX+12)+'px';tip.style.top=(e.clientY+12)+'px';}
   function hideTip(){tip.style.opacity=0;}
 
@@ -400,41 +488,61 @@ function init(){
       if(sortKey==='updated')return sortDir*(new Date(a.updatedAt)-new Date(b.updatedAt));
       return sortDir*((va||0)-(vb||0));});
     const th=(k,l)=>`<th data-k="${k}">${l}${sortKey===k?(sortDir<0?' ▾':' ▴'):''}</th>`;
-    let h=`<thead><tr>${th('name','Tessera')}${th('type','Field')}${th('status','State')}${th('owner','Owner')}<th>Tags</th><th>What it is</th><th>When to use</th>${th('inDeg','◂ rely')}${th('updated','Updated')}</tr></thead><tbody>`;
+    let h=`<thead><tr>${th('name','Tessera')}${th('type','Field')}${th('status','State')}${th('owner','Owner')}<th>Tags</th><th>What it is</th><th>When to use</th>${th('inDeg','◂ rely')}${th('score','Health')}${th('updated','Updated')}</tr></thead><tbody>`;
+    if(!rows.length)h+=`<tr class="empty-row"><td colspan="10">No tesserae match your filters.</td></tr>`;
     rows.forEach(n=>{const t=FIELDS[n.type],s=STATES[n.status];
       h+=`<tr data-go="${n.id}"><td><span class="name">${n.name}</span></td>
         <td><span class="pill" style="color:${t.raw};border-color:${t.raw}66">${t.label}</span></td>
         <td><span class="pill" style="color:${s.color};border-color:${s.color}66">${s.label}</span></td>
         <td style="color:var(--muted)">${n.owner}</td>
         <td class="tags-cell">${(n.tags&&n.tags.length)?n.tags.map(tg=>`<span class="tag" data-tag="${tg}">${tg}</span>`).join(''):'<span class="empty">—</span>'}</td>
-        <td class="summary"><span>${n.summary}</span></td><td class="use"><span>${n.use||'—'}</span></td>
-        <td class="num">${n.inDeg||''}</td><td class="num">${n.updatedAt?ago(n.updatedAt):'—'}</td></tr>`;});
+        <td class="summary"><span>${n.summary||'—'}</span></td><td class="use"><span>${n.use||'—'}</span></td>
+        <td class="num">${n.inDeg||''}</td><td class="num">${n._cp?n._cp.score+'/5':'—'}</td>
+        <td class="num${isStale(n)?' stale':''}">${n.updatedAt?ago(n.updatedAt):'—'}</td></tr>`;});
     h+='</tbody>';document.getElementById('table').innerHTML=h;
     const ic=document.getElementById('indexCount');if(ic)ic.textContent=rows.length===NODES.length?`${NODES.length} tesserae`:`${rows.length} of ${NODES.length} shown`;
     document.querySelectorAll('#table th[data-k]').forEach(th=>th.onclick=()=>{const k=th.dataset.k;
-      if(sortKey===k)sortDir*=-1;else{sortKey=k;sortDir=(k==='inDeg'||k==='updated')?-1:1;}renderTable();});
+      if(sortKey===k)sortDir*=-1;else{sortKey=k;sortDir=(k==='inDeg'||k==='updated'||k==='score')?-1:1;}renderTable();});
     document.querySelectorAll('#table tbody tr[data-go]').forEach(tr=>tr.onclick=()=>select(tr.dataset.go));
     document.querySelectorAll('#table [data-tag]').forEach(el=>el.onclick=ev=>{ev.stopPropagation();searchTag(el.dataset.tag);});
   }
   const btnM=document.getElementById('btnMosaic'),btnI=document.getElementById('btnIndex');
-  function setView(v){const idx=v==='index';
+  function setView(v){const idx=v==='index';curView=idx?'index':'mosaic';
     document.getElementById('tableWrap').classList.toggle('show',idx);
     document.getElementById('stage').style.display=idx?'none':'block';
-    document.getElementById('filters').style.display=idx?'none':'block';
+    document.getElementById('filters').style.display=idx?'none':'flex';
     document.getElementById('freshness').style.display=idx?'none':'flex';
-    btnI.classList.toggle('active',idx);btnM.classList.toggle('active',!idx);if(idx)renderTable();}
+    document.getElementById('emptyMosaic').style.display='none';
+    btnI.classList.toggle('active',idx);btnM.classList.toggle('active',!idx);if(idx)renderTable();else refresh();writeHash();}
   btnM.onclick=()=>setView('mosaic');btnI.onclick=()=>setView('index');
 
+  // ---- global freshness + health ----
   const frags=STATS.fragments??NODES.filter(n=>n.status==='fragment').length;
-  document.getElementById('freshTxt').innerHTML=`Mosaic assembled <b style="color:var(--cyan)">${ago(new Date(GENERATED_AT).toISOString())}</b> · ${NODES.length} tesserae · ${frags} fragments`;
+  const scored=NODES.filter(n=>n._cp);
+  const docPct=scored.length?Math.round(100*scored.reduce((a,n)=>a+n._cp.score,0)/(scored.length*5)):0;
+  document.getElementById('freshTxt').innerHTML=`Mosaic assembled <b style="color:var(--cyan)">${ago(new Date(GENERATED_AT).toISOString())}</b> · ${NODES.length} tesserae · ${frags} fragments · <b style="color:var(--cyan)">${docPct}%</b> documented`;
 
   window.addEventListener('resize',()=>{W=stage.clientWidth;H=stage.clientHeight;
     sim.force('x',d3.forceX(ax).strength(.18)).force('y',d3.forceY(ay).strength(.18));
     sim.alpha(.4).restart();setTimeout(()=>fitView(),650);});
 
+  // ---- keyboard shortcuts ----
+  document.addEventListener('keydown',e=>{
+    const tag=(e.target.tagName||'').toLowerCase();
+    if(e.key==='/'&&tag!=='input'){e.preventDefault();searchEl.focus();return;}
+    if(e.key==='Escape'){if(state.selected)select(null);else if(state.query){searchEl.value='';state.query='';refresh();renderTable();writeHash();}searchEl.blur();return;}
+    if(tag==='input')return;
+    if(e.key==='m'||e.key==='M')setView('mosaic');
+    if(e.key==='i'||e.key==='I')setView('index');
+  });
+
+  // ---- first render + restore shared state ----
+  syncFilterUI();
   refresh();renderTable();
-  // settle the layout up front, then frame it on its centre (no fly-in)
-  sim.stop(); sim.tick(260); ticked(); fitView(0);
+  sim.stop(); sim.tick(260); ticked();
+  setView(pendingView);
+  if(pendingTile){ select(pendingTile); if(pendingView==='mosaic') centerOnNode(byId[pendingTile]); else fitView(0); }
+  else { fitView(0); }
 }
 boot();
 </script>
