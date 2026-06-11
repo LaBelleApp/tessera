@@ -1,12 +1,38 @@
 {
-  "generatedAt": "2026-06-11T07:44:54.960Z",
+  "generatedAt": "2026-06-11T09:54:45.048Z",
   "stats": {
     "mode": "org",
-    "reposScanned": 23,
-    "tesserae": 8,
-    "fragments": 1
+    "reposScanned": 24,
+    "tesserae": 16,
+    "fragments": 2
   },
   "tesserae": [
+    {
+      "id": "aio-cli",
+      "name": "AIO CLI",
+      "type": "cli",
+      "status": "maintained",
+      "owner": "LaBelleApp",
+      "summary": "Command-line tool to scaffold and manage AIO Flutter projects — generates the aio.yaml manifest and wires in features from the AIO registry.",
+      "whenToUse": "Reach for it to create or configure an AIO app and add prebuilt features from the AIO registry.",
+      "uses": [
+        "aio-registry"
+      ],
+      "partOf": "aio",
+      "tags": [
+        "aio",
+        "cli",
+        "scaffolding",
+        "flutter"
+      ],
+      "links": {
+        "repo": "https://github.com/LaBelleApp/aio_cli",
+        "doc": null,
+        "demo": null
+      },
+      "isFragment": false,
+      "updatedAt": "2026-06-11T09:37:55Z"
+    },
     {
       "id": "aio-registry",
       "name": "AIO Registry",
@@ -57,6 +83,81 @@
       "updatedAt": "2026-06-11T07:15:24Z"
     },
     {
+      "id": "grevin-appcast",
+      "name": "Grévin Appcast",
+      "type": "distribution",
+      "status": "maintained",
+      "owner": "LaBelleApp",
+      "summary": "Appcast RSS feed (rss.xml) that forces Grévin to update to the latest version.",
+      "whenToUse": "Reference for hosting a forced-update appcast feed for an app.",
+      "uses": [],
+      "partOf": null,
+      "tags": [
+        "appcast",
+        "updates",
+        "rss",
+        "distribution"
+      ],
+      "links": {
+        "repo": "https://github.com/LaBelleApp/appname-appcast",
+        "doc": null,
+        "demo": null
+      },
+      "isFragment": false,
+      "updatedAt": "2026-06-11T09:50:48Z"
+    },
+    {
+      "id": "flair-appcast",
+      "name": "Flair Appcast",
+      "type": "distribution",
+      "status": "maintained",
+      "owner": "LaBelleApp",
+      "summary": "Appcast RSS feed (rss.xml) that forces Flair to update to the latest version.",
+      "whenToUse": "Reference for hosting a forced-update appcast feed for an app.",
+      "uses": [],
+      "partOf": null,
+      "tags": [
+        "appcast",
+        "updates",
+        "rss",
+        "distribution"
+      ],
+      "links": {
+        "repo": "https://github.com/LaBelleApp/appname-appcast",
+        "doc": null,
+        "demo": null
+      },
+      "isFragment": false,
+      "updatedAt": "2026-06-11T09:50:03Z"
+    },
+    {
+      "id": "smartcleaner",
+      "name": "Smartcleaner",
+      "type": "internal-app",
+      "status": "working",
+      "owner": "LaBelleApp",
+      "summary": "Flutter app to free up phone storage by reviewing and deleting photos and videos.",
+      "whenToUse": "Reference when building a media/storage-cleanup app on the AIO framework.",
+      "uses": [
+        "aio"
+      ],
+      "partOf": null,
+      "tags": [
+        "flutter",
+        "mobile",
+        "storage",
+        "cleaner",
+        "media"
+      ],
+      "links": {
+        "repo": "https://github.com/LaBelleApp/app_smartcleaner",
+        "doc": null,
+        "demo": null
+      },
+      "isFragment": false,
+      "updatedAt": "2026-06-11T09:31:59Z"
+    },
+    {
       "id": "homee",
       "name": "Homee",
       "type": "internal-app",
@@ -84,6 +185,79 @@
       "updatedAt": "2026-06-11T07:34:27Z"
     },
     {
+      "id": "homee-appcast",
+      "name": "Homee Appcast",
+      "type": "distribution",
+      "status": "maintained",
+      "owner": "LaBelleApp",
+      "summary": "Appcast RSS feed (rss.xml) that forces Homee to update to the latest version.",
+      "whenToUse": "Reference for hosting a forced-update appcast feed for an app.",
+      "uses": [],
+      "partOf": null,
+      "tags": [
+        "appcast",
+        "updates",
+        "rss",
+        "distribution"
+      ],
+      "links": {
+        "repo": "https://github.com/LaBelleApp/appname-appcast",
+        "doc": null,
+        "demo": null
+      },
+      "isFragment": false,
+      "updatedAt": "2026-06-11T09:49:02Z"
+    },
+    {
+      "id": "aio-relay",
+      "name": "AIO Relay",
+      "type": "package",
+      "status": "working",
+      "owner": "LaBelleApp",
+      "summary": "Keeps third-party API credentials server-side, letting only attested app instances (App Attest / Play Integrity) call upstream services.",
+      "whenToUse": "Reach for it to proxy upstream API calls without shipping credentials in the app, gated by binary attestation.",
+      "uses": [],
+      "partOf": null,
+      "tags": [
+        "aio",
+        "security",
+        "attestation",
+        "api-proxy",
+        "dart"
+      ],
+      "links": {
+        "repo": "https://github.com/LaBelleApp/aio_relay",
+        "doc": null,
+        "demo": null
+      },
+      "isFragment": false,
+      "updatedAt": "2026-06-11T09:28:34Z"
+    },
+    {
+      "id": "aio-aso",
+      "name": "AIO ASO",
+      "type": "experiment",
+      "status": "in-dev",
+      "owner": "LaBelleApp",
+      "summary": "ASO keyword generator and marketing-site builder for mobile apps.",
+      "whenToUse": "Reach for it to generate App Store Optimization keywords and build a marketing site for an app launch.",
+      "uses": [],
+      "partOf": null,
+      "tags": [
+        "aio",
+        "aso",
+        "marketing",
+        "keywords"
+      ],
+      "links": {
+        "repo": "https://github.com/LaBelleApp/aio_aso",
+        "doc": null,
+        "demo": null
+      },
+      "isFragment": false,
+      "updatedAt": "2026-06-11T09:21:08Z"
+    },
+    {
       "id": "app-distributor",
       "name": "App Distributor",
       "type": "internal-app",
@@ -109,6 +283,34 @@
       },
       "isFragment": false,
       "updatedAt": "2026-06-11T07:29:25Z"
+    },
+    {
+      "id": "animadoc",
+      "name": "Animadoc",
+      "type": "client-app",
+      "status": "in-dev",
+      "owner": "LaBelleApp",
+      "summary": "Flutter app for booking veterinary appointments, for pet owners and animal-health professionals.",
+      "whenToUse": "Reference when building an appointment-booking app on the AIO framework with Supabase.",
+      "uses": [
+        "aio",
+        "app-spec-builder"
+      ],
+      "partOf": null,
+      "tags": [
+        "flutter",
+        "mobile",
+        "veterinary",
+        "booking",
+        "supabase"
+      ],
+      "links": {
+        "repo": "https://github.com/LaBelleApp/app_animadoc",
+        "doc": null,
+        "demo": null
+      },
+      "isFragment": false,
+      "updatedAt": "2026-06-11T09:24:18Z"
     },
     {
       "id": "tessera-manifest-gen",
@@ -154,7 +356,7 @@
         "demo": null
       },
       "isFragment": false,
-      "updatedAt": "2026-06-10T23:32:38Z"
+      "updatedAt": "2026-06-11T07:45:07Z"
     },
     {
       "id": "belt",
@@ -203,6 +405,23 @@
       },
       "isFragment": false,
       "updatedAt": "2026-06-10T23:23:25Z"
+    },
+    {
+      "id": "glutton",
+      "name": "Glutton",
+      "type": "experiment",
+      "status": "fragment",
+      "owner": "unassigned",
+      "summary": "",
+      "whenToUse": "",
+      "uses": [],
+      "partOf": null,
+      "tags": [],
+      "links": {
+        "repo": "https://github.com/LaBelleApp/glutton"
+      },
+      "updatedAt": "2026-06-11T09:51:43Z",
+      "isFragment": true
     },
     {
       "id": "fragment-1",
