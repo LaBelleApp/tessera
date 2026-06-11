@@ -1,12 +1,115 @@
 {
-  "generatedAt": "2026-06-10T23:27:14.277Z",
+  "generatedAt": "2026-06-11T07:44:54.960Z",
   "stats": {
     "mode": "org",
     "reposScanned": 23,
-    "tesserae": 4,
+    "tesserae": 8,
     "fragments": 1
   },
   "tesserae": [
+    {
+      "id": "aio-registry",
+      "name": "AIO Registry",
+      "type": "template",
+      "status": "maintained",
+      "owner": "LaBelleApp",
+      "summary": "Registry of AIO blueprints, templates and widgets the AIO CLI uses to scaffold app features (Firebase, Supabase, Sentry, RevenueCat…).",
+      "whenToUse": "Reach for it to add a prebuilt integration or widget to an AIO app, or to publish a new reusable blueprint.",
+      "uses": [],
+      "partOf": "aio",
+      "tags": [
+        "aio",
+        "blueprints",
+        "templates",
+        "widgets",
+        "scaffolding"
+      ],
+      "links": {
+        "repo": "https://github.com/LaBelleApp/aio_registry",
+        "doc": null,
+        "demo": null
+      },
+      "isFragment": false,
+      "updatedAt": "2026-06-11T07:23:57Z"
+    },
+    {
+      "id": "aio",
+      "name": "AIO",
+      "type": "framework",
+      "status": "maintained",
+      "owner": "LaBelleApp",
+      "summary": "Flutter framework providing a ready-to-launch app with core features built in, accessed through the App() class.",
+      "whenToUse": "Reach for it when starting a new Flutter app and you want batteries-included core, networking, widgets and routing out of the box.",
+      "uses": [],
+      "partOf": null,
+      "tags": [
+        "flutter",
+        "dart",
+        "mobile",
+        "aio"
+      ],
+      "links": {
+        "repo": "https://github.com/LaBelleApp/aio",
+        "doc": null,
+        "demo": null
+      },
+      "isFragment": false,
+      "updatedAt": "2026-06-11T07:15:24Z"
+    },
+    {
+      "id": "homee",
+      "name": "Homee",
+      "type": "internal-app",
+      "status": "working",
+      "owner": "LaBelleApp",
+      "summary": "Flutter app for sharing and organising household tasks.",
+      "whenToUse": "Reference when building a shared household task-management app on the AIO framework with Supabase.",
+      "uses": [
+        "aio"
+      ],
+      "partOf": null,
+      "tags": [
+        "flutter",
+        "mobile",
+        "household",
+        "tasks",
+        "supabase"
+      ],
+      "links": {
+        "repo": "https://github.com/LaBelleApp/app_homee",
+        "doc": null,
+        "demo": null
+      },
+      "isFragment": false,
+      "updatedAt": "2026-06-11T07:34:27Z"
+    },
+    {
+      "id": "app-distributor",
+      "name": "App Distributor",
+      "type": "internal-app",
+      "status": "in-dev",
+      "owner": "LaBelleApp",
+      "summary": "Next.js + NestJS + Supabase platform to design app-store screenshots and distribute app marketing assets.",
+      "whenToUse": "Reach for it to produce store screenshots and marketing assets for the team's apps.",
+      "uses": [
+        "belt"
+      ],
+      "partOf": null,
+      "tags": [
+        "nextjs",
+        "nestjs",
+        "supabase",
+        "screenshots",
+        "distribution"
+      ],
+      "links": {
+        "repo": "https://github.com/LaBelleApp/app-distributor",
+        "doc": null,
+        "demo": null
+      },
+      "isFragment": false,
+      "updatedAt": "2026-06-11T07:29:25Z"
+    },
     {
       "id": "tessera-manifest-gen",
       "name": "Tessera Manifest Gen",
@@ -51,7 +154,7 @@
         "demo": null
       },
       "isFragment": false,
-      "updatedAt": "2026-06-10T23:10:16Z"
+      "updatedAt": "2026-06-10T23:32:38Z"
     },
     {
       "id": "belt",
