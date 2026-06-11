@@ -11,6 +11,7 @@
     { "key": "tool",          "label": "Tool",             "color": "#f59e0b" },
     { "key": "site",          "label": "Site",             "color": "#a3e635" },
     { "key": "service",       "label": "Service",          "color": "#22d3ee" },
+    { "key": "distribution",  "label": "Distribution",     "color": "#ef4444" },
     { "key": "experiment",    "label": "R&D / experiment", "color": "#8aa0b2" },
     { "key": "skill",         "label": "Skill",            "color": "#c084fc" }
   ],

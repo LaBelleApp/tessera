@@ -75,6 +75,7 @@ const sig = {
   flutterPkg: !!pubspec && !(exists('lib/main.dart') || exists('android') || exists('ios')),
   cli: hasBin || exists('bin'),
   web: exists('index.html') || exists('public/index.html') || exists('docs/index.html'),
+  appcast: exists('rss.xml') || exists('appcast.xml') || exists('docs/rss.xml') || exists('docs/appcast.xml'),
   hasTests: exists('test') || exists('tests') || exists('test_driver'),
   hasCI: exists('.github/workflows'),
   // only a clear top-of-README notice, not an incidental mention of the word
@@ -88,6 +89,7 @@ if (sig.skill) typeGuess = 'skill';
 else if (sig.cli) typeGuess = 'cli';
 else if (sig.flutterApp) typeGuess = 'client-app';   // client vs internal = audience → confirm with a human
 else if (sig.flutterPkg) typeGuess = 'package';
+else if (sig.appcast) typeGuess = 'distribution';   // an rss.xml/appcast feed that pushes app updates
 else if (sig.web) typeGuess = 'site';
 
 // ---- status guess (always confirm with a human) ----

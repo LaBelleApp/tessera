@@ -104,6 +104,10 @@ or run the `tessera-manifest-gen` skill to generate it. Required: `id, name, typ
 (label `fragment`). No repo, no manifest. It shows up as a translucent, unset tile.
 When it becomes real, create the repo + manifest and close the issue.
 
+**A stub** — started a repo but don't yet know what it'll be? Commit an **empty `tessera.yaml`**
+(or one with only a few fields). It's onboarded as a **fragment**, with its `id` and GitHub link
+filled in automatically; fill in the rest whenever it takes shape.
+
 ### Setting up the fragment backlog (one-time)
 
 Fragments live as GitHub issues in a dedicated, otherwise-empty repo. To set it up:

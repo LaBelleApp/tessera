@@ -28,6 +28,7 @@ body:
         - tool
         - site
         - service
+        - distribution
         - experiment
         - skill
     validations:

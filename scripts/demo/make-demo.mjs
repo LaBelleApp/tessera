@@ -42,11 +42,22 @@ const F = [
   ['ai-codegen','AI Codegen','experiment','fragment','R&D',2,'Generate full screens from a description.','No clear product goal yet.',[],null],
   ['voice-ui','Voice UI','experiment','testing','R&D',9,'Navigate an app with voice commands.','Accessibility.',['ui-kit'],null],
   ['design-tokens','Design Tokens','experiment','fragment','R&D',30,'Design tokens synced Figma <-> code.','Unify design and dev.',['ui-kit'],null],
+  // a brand-new repo with an empty tessera.yaml → onboarded as a bare fragment
+  ['secret-project','Secret Project','experiment','fragment','unassigned',0,'','',[],null],
 ];
+
+// a few demo tags so the Tags column / tag-search is visible
+const TAGS = {
+  'flutter-core':['flutter','core'], 'ui-kit':['flutter','design-system'], 'auth-module':['auth','security'],
+  'analytics-kit':['analytics'], 'i18n-kit':['i18n'], 'deploy-cli':['ci','devops'], 'tessera':['catalog','onboarding'],
+  'banking-app':['fintech','mobile'], 'retail-app':['ecommerce','mobile'], 'health-app':['health','mobile'],
+  'fitness-app':['health','mobile'], 'media-app':['media','mobile'], 'energy-app':['iot','mobile'],
+  'voice-ui':['accessibility'], 'design-tokens':['design','figma'],
+};
 
 const tesserae = F.map(([id,name,type,status,owner,d,summary,whenToUse,uses,partOf]) => ({
   id, name, type, status, owner, summary, whenToUse,
-  uses, partOf, tags: [], links: { repo: `https://github.com/my-org/${id}` },
+  uses, partOf, tags: TAGS[id] || [], links: { repo: `https://github.com/my-org/${id}` },
   updatedAt: at(d), isFragment: status === 'fragment',
 }));
 

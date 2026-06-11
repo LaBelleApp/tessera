@@ -28,6 +28,9 @@ function normalize(m, extra) {
   };
 }
 
+const kebab = s => String(s).toLowerCase().replace(/[_\s]+/g, '-').replace(/[^a-z0-9-]/g, '').replace(/-+/g, '-').replace(/^-|-$/g, '');
+const titleize = s => String(s).replace(/[-_]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+
 async function collectManifests(octo) {
   const targets = [];
   if (config.org) {
@@ -60,17 +63,34 @@ async function collectManifests(octo) {
       try { m = await getManifestAt(octo, owner, repo, filepath); }
       catch (e) { console.warn(`! ${owner}/${repo}/${filepath}: ${e.message}`); continue; }
 
-      const { ok, errors } = validateManifest(m, taxonomy);
-      if (!ok) { console.warn(`✗ ${owner}/${repo}/${filepath} invalid:`); errors.forEach(e => console.warn('   - ' + e)); continue; }
-
       const dir = path.posix.dirname(filepath);
       const subdir = dir === '.' ? '' : dir;     // '' = repo root
       const updatedAt = await getPathUpdatedAt(octo, owner, repo, subdir, meta.pushedAt);
       const deepLink = subdir ? `${meta.htmlUrl}/tree/${meta.defaultBranch}/${subdir}` : meta.htmlUrl;
-      const links = { repo: deepLink, ...(m.links || {}) };
+      const links = { repo: deepLink, ...((m && m.links) || {}) };
+      const where = `${owner}/${repo}${subdir ? '/' + subdir : ''}`;
+
+      // Empty / id-less manifest = a thing still taking shape → onboard it as a fragment stub.
+      // It just needs to exist; id + GitHub link are filled automatically.
+      if (!m || !m.id) {
+        const id = (m && m.id) || kebab(subdir ? path.posix.basename(subdir) : repo);
+        const type = (m && taxonomy.fields.has(m.type)) ? m.type : 'experiment';
+        tesserae.push({
+          id, name: (m && m.name) || titleize(id), type, status: 'fragment',
+          owner: (m && m.owner) || 'unassigned',
+          summary: (m && m.summary) || '', whenToUse: (m && m.whenToUse) || '',
+          uses: (m && m.uses) || [], partOf: (m && m.partOf) || null,
+          tags: (m && m.tags) || [], links, updatedAt, isFragment: true,
+        });
+        console.log(`◦ ${where} → ${id} (empty manifest → fragment)`);
+        continue;
+      }
+
+      const { ok, errors } = validateManifest(m, taxonomy);
+      if (!ok) { console.warn(`✗ ${where} invalid:`); errors.forEach(e => console.warn('   - ' + e)); continue; }
 
       tesserae.push(normalize(m, { updatedAt, links }));
-      console.log(`✓ ${owner}/${repo}${subdir ? '/' + subdir : ''} → ${m.id}`);
+      console.log(`✓ ${where} → ${m.id}`);
     }
   }
   return { tesserae, scanned };
@@ -133,13 +153,14 @@ async function main() {
   }
   checkSeams(all).forEach(w => console.warn('! ' + w));
 
+  const fragmentCount = all.filter(t => t.isFragment).length;
   const out = {
     generatedAt: new Date().toISOString(),
     stats: {
       mode: config.org ? 'org' : 'repos',
       reposScanned: scanned,
-      tesserae: tesserae.length,
-      fragments: fragments.length,
+      tesserae: all.length - fragmentCount,
+      fragments: fragmentCount,
     },
     tesserae: all,
   };
