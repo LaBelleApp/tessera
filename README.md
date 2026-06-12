@@ -276,7 +276,19 @@ tessera/
 │       ├── SKILL.md
 │       └── detect.mjs       # repo signals: type, deps → uses, links
 └── docs/                    # ← GitHub Pages root
-    ├── index.html           # the mosaic
+    ├── index.html           # markup skeleton (links css + js module)
+    ├── css/styles.css       # all styles
+    ├── js/                  # ES modules (no bundler)
+    │   ├── main.js          # boot: fetch + shared context + wiring
+    │   ├── graph.js         # the mosaic (force layout, tiles, seams)
+    │   ├── detail.js        # detail panel (Overview / Dependencies tabs)
+    │   ├── table.js         # the Index view
+    │   ├── filters.js       # filters, toggles, URL hash, keyboard
+    │   ├── icons.js         # per-field glyphs
+    │   └── util.js          # pure helpers
     ├── data.json            # generated
     └── taxonomy.json        # generated copy
 ```
+
+The site is plain static files — HTML + CSS + native ES modules — which GitHub Pages serves
+as-is (no build step). Modules load over HTTP, so use `npm run serve` / Pages, not `file://`.
