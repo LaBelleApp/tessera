@@ -6,6 +6,7 @@
   "description": "Query the Tessera mosaic — your team's catalog of projects, packages, skills and tools.",
   "long_description": "Gives an agent the same view as the Tessera site: search the catalog, inspect a tessera and its relations, list everything of a type, or get a project's stack so you can mirror its standards. Reads the same data.json the mosaic uses, so humans and agents share one source of truth.",
   "author": { "name": "LaBelleApp" },
+  "icon": "icon.png",
   "repository": { "type": "git", "url": "https://github.com/LaBelleApp/tessera" },
   "server": {
     "type": "node",
