@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- macOS LaunchAgent: runs the Tessera MCP HTTP daemon, auto-starts at login,
+     restarts if it crashes. Replace the __PLACEHOLDERS__, then:
+
+       cp mcp/deploy/dev.labelleapp.tessera-mcp.plist ~/Library/LaunchAgents/
+       launchctl load -w ~/Library/LaunchAgents/dev.labelleapp.tessera-mcp.plist
+
+     Find your node path with:  which node
+-->
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key><string>dev.labelleapp.tessera-mcp</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>__NODE__</string>
+    <string>__REPO__/mcp/server.mjs</string>
+    <string>--http</string>
+  </array>
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>TESSERA_DATA</key><string>__DATA__</string>
+    <key>PORT</key><string>4319</string>
+  </dict>
+  <key>RunAtLoad</key><true/>
+  <key>KeepAlive</key><true/>
+  <key>StandardOutPath</key><string>/tmp/tessera-mcp.log</string>
+  <key>StandardErrorPath</key><string>/tmp/tessera-mcp.log</string>
+</dict>
+</plist>

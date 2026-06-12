@@ -1,0 +1,22 @@
+# Linux systemd *user* service: runs the Tessera MCP HTTP daemon, auto-starts at
+# login, restarts on crash. Replace the __PLACEHOLDERS__, then:
+#
+#   cp mcp/deploy/tessera-mcp.service ~/.config/systemd/user/
+#   systemctl --user daemon-reload
+#   systemctl --user enable --now tessera-mcp
+#   loginctl enable-linger "$USER"   # keep it running after logout / across reboots
+#
+# Find your node path with:  which node
+[Unit]
+Description=Tessera MCP server (HTTP)
+After=network-online.target
+
+[Service]
+ExecStart=__NODE__ __REPO__/mcp/server.mjs --http
+Environment=TESSERA_DATA=__DATA__
+Environment=PORT=4319
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=default.target

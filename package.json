@@ -9,11 +9,16 @@
     "demo": "node scripts/demo/make-demo.mjs",
     "validate": "node scripts/validate.mjs examples/tessera.example.yaml",
     "serve": "node scripts/serve.mjs",
-    "pack-skill": "node scripts/pack-skill.mjs"
+    "pack-skill": "node scripts/pack-skill.mjs",
+    "mcp": "node mcp/server.mjs",
+    "mcp:http": "node mcp/server.mjs --http",
+    "pack-mcpb": "cd mcp && npm install --omit=dev --no-audit --no-fund && npx -y @anthropic-ai/mcpb pack . tessera.mcpb"
   },
   "dependencies": {
-    "@octokit/rest": "^21.0.0",
+    "@modelcontextprotocol/sdk": "^1.29.0",
     "@octokit/plugin-throttling": "^9.0.0",
-    "js-yaml": "^4.2.0"
+    "@octokit/rest": "^21.0.0",
+    "js-yaml": "^4.2.0",
+    "zod": "^4.4.3"
   }
 }

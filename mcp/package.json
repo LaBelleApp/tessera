@@ -1,0 +1,12 @@
+{
+  "name": "tessera-mcp",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Tessera MCP server — gives an agent the catalog the mosaic shows.",
+  "main": "server.mjs",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "zod": "^4.4.3"
+  }
+}

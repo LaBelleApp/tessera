@@ -1,0 +1,40 @@
+{
+  "manifest_version": "0.3",
+  "name": "tessera",
+  "display_name": "Tessera",
+  "version": "0.1.0",
+  "description": "Query the Tessera mosaic — your team's catalog of projects, packages, skills and tools.",
+  "long_description": "Gives an agent the same view as the Tessera site: search the catalog, inspect a tessera and its relations, list everything of a type, or get a project's stack so you can mirror its standards. Reads the same data.json the mosaic uses, so humans and agents share one source of truth.",
+  "author": { "name": "LaBelleApp" },
+  "repository": { "type": "git", "url": "https://github.com/LaBelleApp/tessera" },
+  "server": {
+    "type": "node",
+    "entry_point": "server.mjs",
+    "mcp_config": {
+      "command": "node",
+      "args": ["${__dirname}/server.mjs"],
+      "env": { "TESSERA_DATA": "${user_config.data_source}" }
+    }
+  },
+  "tools": [
+    { "name": "tessera_search", "description": "Find tesserae by free text, optionally filtered by type or tag." },
+    { "name": "tessera_get", "description": "One tessera with its relations (depends on, part of, relied on by, contains) and links." },
+    { "name": "tessera_list", "description": "List every tessera, or all of one field type." },
+    { "name": "tessera_standards", "description": "A project's stack (transitive deps + repo/doc links) to replicate its standards." },
+    { "name": "tessera_stats", "description": "Catalog overview: totals, by type, by state, last assembled." }
+  ],
+  "keywords": ["tessera", "catalog", "mosaic", "registry", "mcp"],
+  "license": "MIT",
+  "compatibility": {
+    "platforms": ["darwin", "win32", "linux"],
+    "runtimes": { "node": ">=18.0.0" }
+  },
+  "user_config": {
+    "data_source": {
+      "type": "string",
+      "title": "Tessera data source",
+      "description": "Local path to your docs/data.json OR the published https URL (e.g. https://<org>.github.io/tessera/data.json).",
+      "required": true
+    }
+  }
+}

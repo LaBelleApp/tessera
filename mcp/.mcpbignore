@@ -1,0 +1,5 @@
+README.md
+deploy/
+.mcpbignore
+*.log
+*.mcpb

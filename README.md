@@ -204,6 +204,16 @@ The new tile appears on the mosaic at the next `npm run build` + push.
 
 ---
 
+## Agent access (MCP)
+
+The same `data.json` also powers an **MCP server** so an AI agent can query the catalog —
+find an existing package/skill, inspect a project's relations, or mirror another project's
+standards. Tools: `tessera_search`, `tessera_get`, `tessera_list`, `tessera_standards`,
+`tessera_stats`. Runs over stdio (`npm run mcp`) or as an HTTP daemon (`npm run mcp:http`).
+See **[`mcp/README.md`](mcp/README.md)** for install (client config, launchd/systemd).
+
+---
+
 ## Configuration
 
 `tessera.config.json`:
@@ -275,6 +285,10 @@ tessera/
 │   └── tessera-manifest-gen/        # skill: generate a tessera.yaml from a repo
 │       ├── SKILL.md
 │       └── detect.mjs       # repo signals: type, deps → uses, links
+├── mcp/                     # MCP server: gives an agent the catalog (see mcp/README.md)
+│   ├── server.mjs           # stdio (npm run mcp) + http (npm run mcp:http)
+│   ├── data.mjs             # search / get / list / standards over data.json
+│   └── deploy/              # launchd + systemd units for an always-on daemon
 └── docs/                    # ← GitHub Pages root
     ├── index.html           # markup skeleton (links css + js module)
     ├── css/styles.css       # all styles
