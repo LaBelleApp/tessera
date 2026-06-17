@@ -27,13 +27,13 @@ are computed by the aggregator — never write them.
    ```bash
    node <path-to>/detect.mjs <TARGET> [mosaic-data-source]
    ```
-   The 2nd argument is **optional** and only powers `usesSuggested` (mapping dependencies to
-   existing tile ids). Prefer the **`TESSERA_DATA` env var** — set once in the shell to a local
-   path *or* an https URL of the mosaic's `data.json` — then omit the argument. You may also
-   pass that path/URL explicitly as the 2nd argument. Never hard-code a URL here.
-
-   Omit it entirely and the manifest is still generated correctly — you just fill `uses` from
-   the description instead of getting auto-suggestions.
+   **Run it with no data argument.** detect still returns `idGuess`, `nameGuess`, `typeGuess`,
+   `dependencies`, `repoUrl`, etc. from the repo alone — that's all you need here. The optional
+   2nd argument only powers an *offline* `usesSuggested` + taxonomy; **don't** rely on a
+   `TESSERA_DATA` env var for it — a Cowork chat runs in an isolated sandbox where shell env vars
+   don't persist. Get `uses`/`partOf` ids and the taxonomy from the **Tessera MCP connector**
+   instead (step 4); it's configured once at install, outside the sandbox. If you happen to have a
+   path/URL on hand you may still pass it inline as the 2nd arg, but it's never required.
 
    It prints JSON: `idGuess`, `nameGuess`, `repoUrl` (deep-linked to the subfolder), `subpath`,
    `ecosystem`, `typeGuess`, `statusGuess`, `ownerHint`, `usesSuggested`, `dependencies`,
@@ -42,13 +42,28 @@ are computed by the aggregator — never write them.
 
 3. **Use the allowed vocabulary.** Pick `type` from `taxonomy.fields` and `status` from
    `taxonomy.states` in the detector output — never invent a value outside those sets.
-   If `taxonomy` is `null` (no `TESSERA_DATA`/`TESSERA_TAXONOMY` set and not run inside the
-   Tessera repo), read the Tessera repo's `taxonomy.json` directly, or ask the user for the
-   source. A genuinely new field is a deliberate taxonomy change (a PR on `taxonomy.json`),
+   If `taxonomy` is `null` (detect had no data source), get the allowed keys from the **Tessera
+   MCP connector** (the field keys appear in `tessera_stats` and across `tessera_list`), or read
+   the Tessera repo's `taxonomy.json`, or ask the user. A genuinely new field is a deliberate
+   taxonomy change (a PR on `taxonomy.json`),
    not a one-off. The central `npm run build` re-validates every manifest, so it's the final
    guardrail if a wrong value slips through.
 
-4. **Draft the manifest.** Fill each field:
+4. **Find seam candidates with the Tessera connector (preferred for `uses` / `partOf`).**
+   If the **Tessera MCP connector** is connected, use it to look up the *real* tile ids to
+   reference, instead of guessing:
+   - `tessera_search(query, type?)` — search the repo's dependencies, framework, or domain to
+     find existing tiles it builds on (e.g. the framework, a package it imports, a CLI it calls).
+   - `tessera_list(type)` — e.g. list all `framework` / `package` / `template` to pick the right
+     `uses` target, or the right parent for `partOf`.
+   Cross-reference the detector's `dependencies` with what the connector returns, and keep only
+   real, hard dependencies. Every id you put in `uses`/`partOf` must be an existing tile id.
+
+   If the connector is **NOT** available, mention it to the user and offer to set it up — it's a
+   one-click `.mcpb` extension (see the repo's `mcp/README.md`); it gives exactly this lookup.
+   Then fall back to the detector's `usesSuggested` (deps mapped to ids from `data.json`).
+
+5. **Draft the manifest.** Fill each field:
    - `id` ← `idGuess` (kebab-case, stable, matches the repo).
    - `name` ← `nameGuess`, refined to how the team actually calls it.
    - `type` ← `typeGuess` — but treat it as a guess; confirm with the user.
@@ -56,29 +71,30 @@ are computed by the aggregator — never write them.
    - `owner` ← `ownerHint` if present, else ask (a person or team).
    - `summary` ← one line, drafted from `readmeExcerpt`: *what it is*.
    - `whenToUse` ← one line: *when to reach for it* (the discovery hook).
-   - `uses` ← `usesSuggested` (dependencies that matched existing tile ids). Review them;
-     keep only true hard dependencies. Add any obvious missing ones.
-   - `partOf` ← set only for composition (e.g. a package that is part of a framework), else `null`.
+   - `uses` ← real tile ids it depends on, from the connector lookup (step 4) or `usesSuggested`.
+     Keep only true hard dependencies.
+   - `partOf` ← set only for composition (e.g. a package that is part of a framework, a skill that
+     is part of a plugin), using an existing parent id from the connector; else `null`.
    - `tags` ← a few free labels for implicit grouping (optional).
    - `links` ← `{ repo: <repoUrl> }`, plus `doc` / `demo` if known.
 
-5. **Confirm the uncertain fields with the user** in a single concise question:
+6. **Confirm the uncertain fields with the user** in a single concise question:
    `type`, `status`, `owner`, and the drafted `summary` / `whenToUse`. Present your drafts
    as defaults so it's a quick yes/adjust — don't interrogate field by field.
 
-6. **Write** the file at `<TARGET>/tessera.yaml`, in this exact field order:
+7. **Write** the file at `<TARGET>/tessera.yaml`, in this exact field order:
    `id, name, type, status, owner, summary, whenToUse, uses, partOf, tags, links`.
    Use [`examples/tessera.example.yaml`](../../examples/tessera.example.yaml) as the formatting reference.
    If `existingManifest` is present, update it in place rather than blindly overwriting —
    preserve human edits, only change what's needed.
 
-7. **Validate** from the Tessera repo root and fix anything it flags:
+8. **Validate** from the Tessera repo root and fix anything it flags:
    ```bash
    node scripts/validate.mjs <TARGET>/tessera.yaml
    ```
    Re-run until it prints `✓ … is valid`.
 
-8. **Report**: confirm the tile id, type, status, and which seams (`uses`/`partOf`) were set,
+9. **Report**: confirm the tile id, type, status, and which seams (`uses`/`partOf`) were set,
    and remind the user it will appear after the next `npm run build` + push.
 
 ## Notes
@@ -87,3 +103,6 @@ are computed by the aggregator — never write them.
 - `id` must be kebab-case and stable — other tiles reference it in their `uses`/`partOf`.
 - Keep `summary` and `whenToUse` to one line each. `whenToUse` is what makes the mosaic useful
   for discovery, so make it concrete ("Reference for a fintech project", not "A banking app").
+- The **Tessera MCP connector** is the best source for valid `uses`/`partOf` ids (and to check a
+  dependency already exists as a tile). If it isn't connected, suggest installing it (`mcp/README.md`)
+  and fall back to the detector's `usesSuggested`.
