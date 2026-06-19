@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-06-11T22:53:20.157Z",
+  "generatedAt": "2026-06-19T11:57:27.678Z",
   "stats": {
     "mode": "org",
-    "reposScanned": 24,
-    "tesserae": 16,
-    "fragments": 2
+    "reposScanned": 25,
+    "tesserae": 17,
+    "fragments": 4
   },
   "tesserae": [
     {
@@ -311,7 +311,7 @@
         "demo": null
       },
       "isFragment": false,
-      "updatedAt": "2026-06-11T09:24:18Z"
+      "updatedAt": "2026-06-19T10:23:28Z"
     },
     {
       "id": "tessera-manifest-gen",
@@ -357,7 +357,7 @@
         "demo": null
       },
       "isFragment": false,
-      "updatedAt": "2026-06-11T13:24:13Z"
+      "updatedAt": "2026-06-12T20:39:55Z"
     },
     {
       "id": "belt",
@@ -381,7 +381,7 @@
         "demo": null
       },
       "isFragment": false,
-      "updatedAt": "2026-06-11T10:10:40Z"
+      "updatedAt": "2026-06-18T08:45:50Z"
     },
     {
       "id": "app-spec-builder",
@@ -422,6 +422,65 @@
         "repo": "https://github.com/LaBelleApp/glutton"
       },
       "updatedAt": "2026-06-11T09:51:43Z",
+      "isFragment": true
+    },
+    {
+      "id": "engram",
+      "name": "Engram",
+      "type": "tool",
+      "status": "in-dev",
+      "owner": "LaBelleApp",
+      "summary": "Local, Claude-driven brain that consolidates per-project captures into a single persistent, cross-project knowledge vault in Obsidian.",
+      "whenToUse": "Reach for it to turn raw, per-project memory notes (e.g. from Belt) into a deduplicated, categorized, searchable knowledge base reusable across every project.",
+      "uses": [],
+      "partOf": null,
+      "tags": [
+        "obsidian",
+        "memory",
+        "knowledge-base",
+        "claude",
+        "belt"
+      ],
+      "links": {
+        "repo": "https://github.com/LaBelleApp/engram",
+        "doc": null,
+        "demo": null
+      },
+      "isFragment": false,
+      "updatedAt": "2026-06-19T09:35:57Z"
+    },
+    {
+      "id": "fragment-3",
+      "name": "Engram connecté à un repo pour partager",
+      "type": "experiment",
+      "status": "fragment",
+      "owner": "ClementVandvl",
+      "summary": "Engram connecté à un repo pour partager",
+      "whenToUse": "",
+      "uses": [],
+      "partOf": null,
+      "tags": [],
+      "links": {
+        "repo": "https://github.com/LaBelleApp/tessera-backlog/issues/3"
+      },
+      "updatedAt": "2026-06-17T18:47:02Z",
+      "isFragment": true
+    },
+    {
+      "id": "fragment-2",
+      "name": "Check mémoire",
+      "type": "skill",
+      "status": "fragment",
+      "owner": "ClementVandvl",
+      "summary": "Un skill qui analyse un dossier de mémoire de belt pour en tirer les plus pertinent pour d'autres projet et les ajouter a la base globale",
+      "whenToUse": "",
+      "uses": [],
+      "partOf": null,
+      "tags": [],
+      "links": {
+        "repo": "https://github.com/LaBelleApp/tessera-backlog/issues/2"
+      },
+      "updatedAt": "2026-06-16T10:11:51Z",
       "isFragment": true
     },
     {
