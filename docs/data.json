@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-06-19T11:57:27.678Z",
+  "generatedAt": "2026-06-29T09:29:36.269Z",
   "stats": {
     "mode": "org",
-    "reposScanned": 25,
-    "tesserae": 17,
+    "reposScanned": 26,
+    "tesserae": 18,
     "fragments": 4
   },
   "tesserae": [
@@ -81,7 +81,7 @@
         "demo": null
       },
       "isFragment": false,
-      "updatedAt": "2026-06-11T07:15:24Z"
+      "updatedAt": "2026-06-23T07:43:27Z"
     },
     {
       "id": "grevin-appcast",
@@ -283,7 +283,7 @@
         "demo": null
       },
       "isFragment": false,
-      "updatedAt": "2026-06-11T07:29:25Z"
+      "updatedAt": "2026-06-24T12:56:24Z"
     },
     {
       "id": "animadoc",
@@ -311,7 +311,7 @@
         "demo": null
       },
       "isFragment": false,
-      "updatedAt": "2026-06-19T10:23:28Z"
+      "updatedAt": "2026-06-23T21:21:10Z"
     },
     {
       "id": "tessera-manifest-gen",
@@ -334,7 +334,7 @@
         "demo": null
       },
       "isFragment": false,
-      "updatedAt": "2026-06-11T09:55:06Z"
+      "updatedAt": "2026-06-17T20:20:10Z"
     },
     {
       "id": "tessera",
@@ -357,7 +357,7 @@
         "demo": null
       },
       "isFragment": false,
-      "updatedAt": "2026-06-12T20:39:55Z"
+      "updatedAt": "2026-06-19T11:57:44Z"
     },
     {
       "id": "belt",
@@ -447,7 +447,50 @@
         "demo": null
       },
       "isFragment": false,
-      "updatedAt": "2026-06-19T09:35:57Z"
+      "updatedAt": "2026-06-21T16:41:21Z"
+    },
+    {
+      "id": "gridsmith",
+      "name": "Gridsmith",
+      "type": "framework",
+      "status": "in-dev",
+      "owner": "LaBelleApp",
+      "summary": "Pluggable, distributed build forge (Android + iOS) with a Postgres-only control plane, branchable onto any host that brings Postgres, S3, K8s and Mac silicon.",
+      "whenToUse": "Reach for it to queue, claim and run mobile app builds from your own host, keyed on an opaque external_ref without exposing your project model.",
+      "uses": [],
+      "partOf": null,
+      "tags": [
+        "build",
+        "ci",
+        "mobile",
+        "android",
+        "ios",
+        "nestjs",
+        "postgres",
+        "k8s"
+      ],
+      "links": {
+        "repo": "https://github.com/LaBelleApp/gridsmith"
+      },
+      "isFragment": false,
+      "updatedAt": "2026-06-29T09:27:56Z"
+    },
+    {
+      "id": "fragment-4",
+      "name": "code-linter",
+      "type": "skill",
+      "status": "fragment",
+      "owner": "ClementVandvl",
+      "summary": "Un skill pour check tout ce qu'on veut pas dans le code",
+      "whenToUse": "",
+      "uses": [],
+      "partOf": null,
+      "tags": [],
+      "links": {
+        "repo": "https://github.com/LaBelleApp/tessera-backlog/issues/4"
+      },
+      "updatedAt": "2026-06-21T23:10:19Z",
+      "isFragment": true
     },
     {
       "id": "fragment-3",
@@ -481,23 +524,6 @@
         "repo": "https://github.com/LaBelleApp/tessera-backlog/issues/2"
       },
       "updatedAt": "2026-06-16T10:11:51Z",
-      "isFragment": true
-    },
-    {
-      "id": "fragment-1",
-      "name": "Utiliser Obsidian comme base de connaissance commune à tous les projets pour que Claude puisse s'en servir",
-      "type": "tool",
-      "status": "fragment",
-      "owner": "ClementVandvl",
-      "summary": "Claude Memory",
-      "whenToUse": "",
-      "uses": [],
-      "partOf": null,
-      "tags": [],
-      "links": {
-        "repo": "https://github.com/LaBelleApp/tessera-backlog/issues/1"
-      },
-      "updatedAt": "2026-06-10T23:26:37Z",
       "isFragment": true
     }
   ]
